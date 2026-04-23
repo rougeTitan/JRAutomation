@@ -1,0 +1,29 @@
+# OAuth credentials & tokens
+gmail_agent/credentials.json
+gmail_agent/token.pickle
+
+# Generated data outputs
+gmail_agent/data/
+
+# Resume research outputs
+resources/resumes/
+resources/metadata.json
+resources/analysis_report.json
+resources/insights/
+
+# Job target outputs
+job_targets/jobs.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# Env
+.env
+
+# Node
+node_modules/
+package-lock.json
+!tsconfig.json

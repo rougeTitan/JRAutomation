@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Email Analyzer - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif !important;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        body { background: #f5f5f7 !important; color: #1d1d1f; }
+
+        /* Slide panel */
+        .slide-panel { transform: translateX(100%); transition: transform 0.38s cubic-bezier(0.4,0,0.2,1); box-shadow: -12px 0 48px rgba(0,0,0,0.18); }
+        .slide-panel.open { transform: translateX(0); }
+
+        /* Skill tags */
+        .skill-tag { display:inline-block; padding:3px 11px; border-radius:999px; font-size:0.68rem; font-weight:600; margin:2px; letter-spacing:0.02em; }
+        .req-skill  { background:#e3f0ff; color:#0051a2; }
+        .nice-skill { background:#f0e8ff; color:#6419a0; }
+
+        /* Spinner */
+        .spinner { animation: spin 0.75s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Card fade-in */
+        @keyframes fadeSlideUp {
+            from { opacity:0; transform:translateY(16px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+        .job-card-anim { animation: fadeSlideUp 0.35s ease both; }
+
+        /* Job cards */
+        .job-card-wrap {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid rgba(0,0,0,0.07);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 14px rgba(0,0,0,0.05);
+            transition: box-shadow 0.24s ease, transform 0.24s ease;
+            padding: 20px;
+        }
+        .job-card-wrap:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.10), 0 16px 40px rgba(0,0,0,0.07);
+            transform: translateY(-3px);
+        }
+
+        /* Stat cards */
+        .stat-card {
+            background: white;
+            border-radius: 18px;
+            border: none !important;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            padding: 24px;
+            transition: box-shadow 0.22s ease, transform 0.22s ease;
+        }
+        .stat-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.12); transform: translateY(-2px); }
+
+        /* Section cards (charts, filters, listings) */
+        .section-card {
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            padding: 24px;
+            border: none;
+        }
+
+        /* Buttons micro-interaction */
+        button { transition: all 0.15s ease !important; }
+        button:active { transform: scale(0.96) !important; }
+
+        /* Modals */
+        .apple-modal {
+            border-radius: 22px !important;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.32) !important;
+            overflow: hidden;
+        }
+
+        /* Inputs */
+        input, select, textarea {
+            border-radius: 10px !important;
+            border: 1.5px solid #d2d2d7 !important;
+            transition: border-color 0.15s, box-shadow 0.15s !important;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #0071e3 !important;
+            box-shadow: 0 0 0 3px rgba(0,113,227,0.15) !important;
+            outline: none !important;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #c7c7cc; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8e8e93; }
+
+        /* Footer */
+        .app-footer { background: #1d1d1f; }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header style="background:linear-gradient(135deg,#1d1d1f 0%,#0a0a0a 60%,#0c2340 100%);border-bottom:1px solid rgba(255,255,255,0.08);">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="font-bold flex items-center text-white" style="font-size:1.35rem;letter-spacing:-0.03em;">
+                            <span style="background:#0071e3;border-radius:10px;padding:6px 10px;margin-right:12px;font-size:0.95rem;"><i class="fas fa-briefcase"></i></span>
+                            Job Email Analyzer
+                        </h1>
+                        <p style="color:rgba(255,255,255,0.45);font-size:0.78rem;margin-top:3px;letter-spacing:0.01em;">Intelligent parsing &nbsp;·&nbsp; AI analysis &nbsp;·&nbsp; Tailored resumes &nbsp;·&nbsp; Smart replies</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="aiKeyStatus" class="hidden text-xs px-3 py-1.5 font-semibold" style="background:rgba(255,213,0,0.15);color:#ffd500;border-radius:999px;border:1px solid rgba(255,213,0,0.3);">
+                            <i class="fas fa-robot mr-1"></i>AI: No Key
+                        </span>
+                        <button onclick="cleanupOldEmails()" style="background:rgba(255,59,48,0.15);color:#ff453a;border:1px solid rgba(255,59,48,0.25);border-radius:10px;padding:7px 14px;font-size:0.8rem;font-weight:600;">
+                            <i class="fas fa-trash-alt mr-1"></i>Cleanup
+                        </button>
+                        <button id="refreshBtn" onclick="refreshEmails()" style="background:#0071e3;color:white;border:none;border-radius:10px;padding:7px 18px;font-size:0.8rem;font-weight:600;">
+                            <i class="fas fa-sync-alt mr-1"></i>Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-7">
+                <div class="stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p style="color:#6e6e73;font-size:0.78rem;font-weight:500;letter-spacing:0.01em;">Emails Processed</p>
+                            <h3 style="font-size:2.2rem;font-weight:700;color:#1d1d1f;letter-spacing:-0.04em;line-height:1.1;margin-top:4px;" id="totalProcessed">0</h3>
+                        </div>
+                        <div style="background:#e3f0ff;border-radius:14px;padding:12px;">
+                            <i class="fas fa-envelope" style="color:#0071e3;font-size:1.3rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p style="color:#6e6e73;font-size:0.78rem;font-weight:500;letter-spacing:0.01em;">Job Opportunities</p>
+                            <h3 style="font-size:2.2rem;font-weight:700;color:#1d1d1f;letter-spacing:-0.04em;line-height:1.1;margin-top:4px;" id="jobCount">0</h3>
+                        </div>
+                        <div style="background:#e3ffe8;border-radius:14px;padding:12px;">
+                            <i class="fas fa-briefcase" style="color:#1c7a3a;font-size:1.3rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p style="color:#6e6e73;font-size:0.78rem;font-weight:500;letter-spacing:0.01em;">Unique Technologies</p>
+                            <h3 style="font-size:2.2rem;font-weight:700;color:#1d1d1f;letter-spacing:-0.04em;line-height:1.1;margin-top:4px;" id="techCount">0</h3>
+                        </div>
+                        <div style="background:#f0e8ff;border-radius:14px;padding:12px;">
+                            <i class="fas fa-code" style="color:#6419a0;font-size:1.3rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p style="color:#6e6e73;font-size:0.78rem;font-weight:500;letter-spacing:0.01em;">Unique Recruiters</p>
+                            <h3 style="font-size:2.2rem;font-weight:700;color:#1d1d1f;letter-spacing:-0.04em;line-height:1.1;margin-top:4px;" id="recruiterCount">0</h3>
+                        </div>
+                        <div style="background:#fff3e0;border-radius:14px;padding:12px;">
+                            <i class="fas fa-users" style="color:#c45200;font-size:1.3rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-7">
+                <div class="section-card">
+                    <h3 style="font-size:1rem;font-weight:700;color:#1d1d1f;letter-spacing:-0.02em;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+                        <i class="fas fa-chart-pie" style="color:#0071e3;"></i>Experience Distribution
+                    </h3>
+                    <canvas id="experienceChart"></canvas>
+                </div>
+                <div class="section-card">
+                    <h3 style="font-size:1rem;font-weight:700;color:#1d1d1f;letter-spacing:-0.02em;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+                        <i class="fas fa-chart-bar" style="color:#1c7a3a;"></i>Top Technologies
+                    </h3>
+                    <canvas id="techChart" style="max-height:500px;"></canvas>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="section-card mb-6">
+                <h3 style="font-size:1rem;font-weight:700;color:#1d1d1f;letter-spacing:-0.02em;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+                    <i class="fas fa-magnifying-glass" style="color:#0071e3;"></i>Search & Filter
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label style="display:block;font-size:0.76rem;font-weight:600;color:#6e6e73;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Search Jobs</label>
+                        <input type="text" id="searchInput" placeholder="Title, company, skills…"
+                               class="w-full px-4 py-2.5" style="font-size:0.87rem;"
+                               onkeyup="filterJobs()">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:0.76rem;font-weight:600;color:#6e6e73;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Technology</label>
+                        <select id="techFilter" class="w-full px-4 py-2.5" style="font-size:0.87rem;" onchange="filterJobs()">
+                            <option value="">All Technologies</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:0.76rem;font-weight:600;color:#6e6e73;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Experience Level</label>
+                        <select id="expFilter" class="w-full px-4 py-2.5" style="font-size:0.87rem;" onchange="filterJobs()">
+                            <option value="">All Levels</option>
+                            <option value="Junior/Entry-Level">Junior/Entry-Level</option>
+                            <option value="Mid-Level">Mid-Level</option>
+                            <option value="Senior">Senior</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Listings -->
+            <div class="section-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+                    <h3 style="font-size:1rem;font-weight:700;color:#1d1d1f;letter-spacing:-0.02em;display:flex;align-items:center;gap:8px;">
+                        <i class="fas fa-list-ul" style="color:#0071e3;"></i>
+                        Opportunities
+                        <span id="filteredCount" style="font-size:0.8rem;font-weight:500;color:#6e6e73;">(0)</span>
+                    </h3>
+                    <button onclick="exportToCSV()" style="background:#e3f0ff;color:#0051a2;border:none;border-radius:10px;padding:7px 16px;font-size:0.8rem;font-weight:600;">
+                        <i class="fas fa-download mr-1"></i>Export CSV
+                    </button>
+                </div>
+                
+                <div id="jobsList" class="space-y-4">
+                    <!-- Jobs will be loaded here -->
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="fas fa-inbox text-6xl mb-4"></i>
+                        <p class="text-lg">No data loaded yet</p>
+                        <p class="text-sm mt-2">Run 'python job_analyzer.py' to analyze emails first</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer" style="padding:24px 0;margin-top:48px;">
+            <div class="container mx-auto px-6 text-center" style="color:rgba(255,255,255,0.4);font-size:0.78rem;">
+                &copy; 2026 Job Email Analyzer &nbsp;·&nbsp; AI-powered job search automation
+            </div>
+        </footer>
+    </div>
+
+    <!-- ─── AI Summary Slide Panel ─── -->
+    <div id="summaryOverlay" class="fixed inset-0 bg-black bg-opacity-40 z-40 hidden" onclick="closeSummaryPanel()"></div>
+    <div id="summaryPanel" class="slide-panel fixed top-0 right-0 h-full w-full md:w-2/5 bg-white shadow-2xl z-50 flex flex-col overflow-hidden">
+        <div class="text-white px-5 py-4 flex items-center justify-between" style="background:linear-gradient(135deg,#1d1d1f 0%,#0c2340 100%)">
+            <div>
+                <h2 class="font-bold text-lg" id="panelTitle">Job Analysis</h2>
+                <p class="text-blue-200 text-xs mt-0.5" id="panelSubtitle"></p>
+            </div>
+            <button onclick="closeSummaryPanel()" class="text-white hover:text-blue-200 text-xl"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="summaryContent" class="flex-1 overflow-y-auto p-5 space-y-4">
+            <div class="text-center py-12 text-gray-400">
+                <i class="fas fa-spinner spinner text-4xl mb-3"></i>
+                <p>Fetching &amp; analyzing email…</p>
+            </div>
+        </div>
+        <div class="border-t px-5 py-3 flex gap-3 bg-gray-50">
+            <button id="tailorBtn" onclick="tailorResume()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition text-sm">
+                <i class="fas fa-file-alt mr-2"></i>Generate Tailored Resume
+            </button>
+            <button id="baseResumeBtn" onclick="viewBaseResume()" class="px-4 bg-gray-200 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-300 transition text-sm">
+                <i class="fas fa-eye mr-1"></i>Base Resume
+            </button>
+        </div>
+    </div>
+
+    <!-- ─── Compose / Reply Modal ─── -->
+    <div id="composeModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-4" style="z-index:70">
+        <div class="apple-modal bg-white w-full max-w-2xl flex flex-col" style="max-height:90vh">
+            <div class="flex items-center justify-between px-5 py-3 border-b bg-gray-50 rounded-t-xl">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fas fa-paper-plane text-blue-600"></i>Draft Reply
+                    <span id="composeAiBadge" class="hidden text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold"><i class="fas fa-robot mr-1"></i>AI Generated</span>
+                </span>
+                <button onclick="closeComposeModal()" class="text-gray-400 hover:text-gray-700 text-xl">&times;</button>
+            </div>
+            <div class="px-5 py-4 flex flex-col gap-3 overflow-y-auto flex-1">
+                <div>
+                    <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">To</label>
+                    <input id="composeTo" type="email" readonly
+                        class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-600" />
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Subject</label>
+                    <input id="composeSubject" type="text"
+                        class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                </div>
+                <div class="flex-1">
+                    <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Body</label>
+                    <textarea id="composeBody" rows="14"
+                        class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none font-mono"></textarea>
+                </div>
+                <label class="flex items-center gap-2 cursor-pointer select-none p-3 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition">
+                    <input type="checkbox" id="attachResumeChk" class="w-4 h-4 accent-blue-600" />
+                    <span class="text-sm font-semibold text-blue-800">
+                        <i class="fas fa-paperclip mr-1"></i>Attach tailored resume
+                    </span>
+                    <span class="text-xs text-blue-500 ml-auto">(.html · highlights included)</span>
+                </label>
+                <div id="composeError" class="hidden text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2"></div>
+                <div id="composeSuccess" class="hidden text-sm text-green-700 bg-green-50 rounded-lg px-3 py-2"></div>
+            </div>
+            <div class="flex items-center justify-between px-5 py-3 border-t bg-gray-50 rounded-b-xl gap-2">
+                <button onclick="regenerateDraft()" class="flex items-center gap-1 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition">
+                    <i class="fas fa-sync-alt"></i> Regenerate
+                </button>
+                <div class="flex gap-2">
+                    <button onclick="closeComposeModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-300 transition">Cancel</button>
+                    <button id="sendBtn" onclick="sendReply()" class="flex items-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition">
+                        <i class="fas fa-paper-plane"></i> Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── Resume Preview Modal ─── -->
+    <div id="resumeModal" class="fixed inset-0 bg-black bg-opacity-70 z-60 hidden flex items-center justify-center p-4" style="z-index:60">
+        <div class="apple-modal bg-white w-full max-w-5xl h-5/6 flex flex-col">
+            <div class="flex items-center justify-between px-5 py-3 border-b bg-gray-50 rounded-t-xl">
+                <h3 class="font-bold text-gray-800" id="resumeModalTitle">Resume Preview</h3>
+                <div class="flex gap-2">
+                    <button onclick="downloadResume()" class="bg-green-600 text-white px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-green-700 transition">
+                        <i class="fas fa-download mr-1"></i>Download HTML
+                    </button>
+                    <button onclick="printResume()" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-blue-700 transition">
+                        <i class="fas fa-print mr-1"></i>Print / PDF
+                    </button>
+                    <button onclick="closeResumeModal()" class="bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-300 transition">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <iframe id="resumeFrame" class="flex-1 w-full rounded-b-xl" style="border:none"></iframe>
+        </div>
+    </div>
+
+    <script>
+        let allJobs = [];
+        let filteredJobs = [];
+        let activeEmailId = null;
+        let currentResumeHtml = '';
+
+        // ── Data Loading ──────────────────────────────────────
+        async function loadData() {
+            try {
+                const res = await fetch('/api/jobs');
+                const result = await res.json();
+                if (result.success) {
+                    const data = result.data;
+                    allJobs = data.jobs || [];
+                    filteredJobs = [...allJobs];
+                    updateStatistics(data.statistics);
+                    populateFilters(data.statistics);
+                    renderJobs(filteredJobs);
+                    createCharts(data.statistics);
+                    checkAiKey();
+                } else {
+                    showNoDataMessage();
+                }
+            } catch (e) { showNoDataMessage(); }
+        }
+
+        async function checkAiKey() {
+            const el = document.getElementById('aiKeyStatus');
+            try {
+                const res = await fetch('/api/resume');
+                const r = await res.json();
+                if (!r.success) { el.classList.remove('hidden'); return; }
+            } catch {}
+        }
+
+        function updateStatistics(stats) {
+            document.getElementById('totalProcessed').textContent = stats.total_processed || 0;
+            document.getElementById('jobCount').textContent = stats.job_emails_found || 0;
+            document.getElementById('techCount').textContent = Object.keys(stats.technologies || {}).length;
+            document.getElementById('recruiterCount').textContent = Object.keys(stats.senders || {}).length;
+        }
+
+        function populateFilters(stats) {
+            const techFilter = document.getElementById('techFilter');
+            Object.keys(stats.technologies || {}).sort().forEach(tech => {
+                const opt = document.createElement('option');
+                opt.value = opt.textContent = tech;
+                techFilter.appendChild(opt);
+            });
+        }
+
+        // ── Job Cards ─────────────────────────────────────────
+        function renderJobs(jobs) {
+            const list = document.getElementById('jobsList');
+            document.getElementById('filteredCount').textContent = `(${jobs.length})`;
+            if (!jobs.length) {
+                list.innerHTML = `<div class="text-center py-12 text-gray-500">
+                    <i class="fas fa-search text-6xl mb-4"></i><p class="text-lg">No jobs match your filters</p></div>`;
+                return;
+            }
+            list.innerHTML = jobs.map((job, index) => {
+                const hasSummary = !!job.ai_summary;
+                const s = hasSummary ? job.ai_summary : null;
+                const workBadge = s ? workTypeBadge(s.work_type) : '';
+                const aiTag = hasSummary
+                    ? `<span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold"><i class="fas fa-robot mr-1"></i>Analyzed</span>`
+                    : '';
+                const skills = s ? s.required_skills.slice(0,6).map(sk =>
+                    `<span class="skill-tag req-skill">${escapeHtml(sk)}</span>`).join('') :
+                    job.technologies.slice(0,6).map(t =>
+                    `<span class="skill-tag" style="background:#f0fdf4;color:#166534">${escapeHtml(t)}</span>`).join('');
+                const summaryText = s
+                    ? `<div class="text-sm text-gray-700 leading-relaxed">${escapeHtml(s.resume_tailoring_notes || '')}</div>`
+                    : `<p class="text-sm text-gray-600 italic">${escapeHtml((job.summary || '').substring(0,200))}${job.summary && job.summary.length > 200 ? '…' : ''}</p>`;
+
+                return `
+                <div class="job-card-wrap job-card-anim" id="job-${job.email_id}" style="animation-delay:${Math.min(index * 0.04, 0.4)}s">
+                    <div class="flex justify-between items-start gap-3">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center flex-wrap gap-2 mb-1">
+                                <h4 class="text-base font-bold text-gray-800">${escapeHtml(s ? s.role_title : job.job_title)}</h4>
+                                ${workBadge} ${aiTag}
+                            </div>
+                            <div class="flex flex-wrap gap-3 text-xs text-gray-500 mb-2">
+                                <span><i class="fas fa-user text-blue-400 mr-1"></i>${escapeHtml(job.sender.name)}</span>
+                                <span><i class="fas fa-envelope text-blue-400 mr-1"></i>${escapeHtml(job.sender.email)}</span>
+                                ${s && s.company && s.company !== 'See email' ? `<span><i class="fas fa-building text-blue-400 mr-1"></i>${escapeHtml(s.company)}</span>` : ''}
+                                <span><i class="fas fa-map-marker-alt text-blue-400 mr-1"></i>${escapeHtml(s ? s.location : job.location)}</span>
+                                ${s && s.experience_years ? `<span><i class="fas fa-clock text-blue-400 mr-1"></i>${escapeHtml(s.experience_years)}</span>` : ''}
+                                ${(s && s.compensation) || job.salary ? `<span class="text-green-600 font-semibold"><i class="fas fa-dollar-sign mr-1"></i>${escapeHtml((s && s.compensation) || job.salary)}</span>` : ''}
+                                <span class="text-gray-400"><i class="fas fa-calendar mr-1"></i>${formatDate(job.date)}</span>
+                            </div>
+                            <div class="mb-3">${skills}</div>
+                            ${summaryText}
+                        </div>
+                        <div class="flex flex-col gap-1.5 items-end shrink-0">
+                            <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium whitespace-nowrap">
+                                ${escapeHtml(s ? expLabel(s.experience_years) : job.experience_level)}
+                            </span>
+                            <button onclick="analyzeJob('${job.email_id}')"
+                                class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-xs font-semibold whitespace-nowrap">
+                                <i class="fas fa-robot mr-1"></i>${hasSummary ? 'Re-Analyze' : 'AI Analyze'}
+                            </button>
+                            ${hasSummary ? `<button onclick="quickTailor('${job.email_id}')"
+                                class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition text-xs font-semibold whitespace-nowrap">
+                                <i class="fas fa-file-alt mr-1"></i>Tailor Resume
+                            </button>` : ''}
+                            <button onclick="openCompose('${job.email_id}')"
+                                class="px-3 py-1.5 ${job.replied ? 'bg-gray-300 text-gray-500' : 'bg-blue-600 text-white hover:bg-blue-700'} rounded-lg transition text-xs font-semibold whitespace-nowrap">
+                                <i class="fas fa-reply mr-1"></i>${job.replied ? 'Replied' : 'Reply'}
+                            </button>
+                            <button onclick="deleteEmail('${job.email_id}')"
+                                class="px-3 py-1.5 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition text-xs">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function workTypeBadge(wt) {
+            if (!wt) return '';
+            const map = { Remote: 'bg-green-100 text-green-700', Hybrid: 'bg-yellow-100 text-yellow-700', Onsite: 'bg-orange-100 text-orange-700' };
+            const cls = map[wt] || 'bg-gray-100 text-gray-600';
+            return `<span class="text-xs px-2 py-0.5 rounded-full font-semibold ${cls}">${wt}</span>`;
+        }
+
+        function expLabel(yrs) {
+            if (!yrs || yrs === 'Not specified') return 'Exp: N/A';
+            return `${yrs} exp`;
+        }
+
+        // ── Filters ───────────────────────────────────────────
+        function filterJobs() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const tf = document.getElementById('techFilter').value;
+            const ef = document.getElementById('expFilter').value;
+            filteredJobs = allJobs.filter(j => {
+                const matchQ = !q || j.job_title.toLowerCase().includes(q) ||
+                    j.sender.name.toLowerCase().includes(q) ||
+                    (j.summary || '').toLowerCase().includes(q) ||
+                    (j.ai_summary?.resume_tailoring_notes || '').toLowerCase().includes(q);
+                const matchT = !tf || j.technologies.includes(tf) ||
+                    (j.ai_summary?.required_skills || []).includes(tf);
+                const matchE = !ef || j.experience_level === ef;
+                return matchQ && matchT && matchE;
+            });
+            renderJobs(filteredJobs);
+        }
+
+        // ── Charts ────────────────────────────────────────────
+        function createCharts(stats) {
+            const exp = stats.experience_levels || {};
+            new Chart(document.getElementById('experienceChart'), {
+                type: 'doughnut',
+                data: { labels: Object.keys(exp), datasets: [{ data: Object.values(exp), backgroundColor: ['#3B82F6','#10B981','#F59E0B','#EF4444'] }] },
+                options: { responsive: true }
+            });
+            const tech = Object.entries(stats.technologies || {}).sort((a,b) => b[1]-a[1]);
+            new Chart(document.getElementById('techChart'), {
+                type: 'bar',
+                data: { labels: tech.map(t=>t[0]), datasets: [{ label:'Mentions', data: tech.map(t=>t[1]), backgroundColor:'#10B981' }] },
+                options: { responsive: true, maintainAspectRatio: false, indexAxis:'y', scales: { x: { beginAtZero:true, ticks:{stepSize:1} } } }
+            });
+        }
+
+        // ── AI Analyze ────────────────────────────────────────
+        async function analyzeJob(emailId) {
+            activeEmailId = emailId;
+            const job = allJobs.find(j => j.email_id === emailId);
+            document.getElementById('panelTitle').textContent = job ? (job.job_title || 'Analyzing…') : 'Analyzing…';
+            document.getElementById('panelSubtitle').textContent = job ? job.sender.name : '';
+            document.getElementById('summaryContent').innerHTML = `
+                <div class="text-center py-16 text-gray-400">
+                    <i class="fas fa-spinner spinner text-4xl mb-3 text-blue-500"></i>
+                    <p class="font-medium">Fetching full email &amp; extracting job details…</p>
+                    <p class="text-xs mt-1">This may take 5–15 seconds</p>
+                </div>`;
+            openSummaryPanel();
+            try {
+                const res = await fetch(`/api/jobs/${emailId}/summarize`, { method:'POST' });
+                const result = await res.json();
+                if (result.success) {
+                    renderSummary(result.summary, job);
+                    const idx = allJobs.findIndex(j => j.email_id === emailId);
+                    if (idx !== -1) allJobs[idx].ai_summary = result.summary;
+                    renderJobs(filteredJobs);
+                } else {
+                    document.getElementById('summaryContent').innerHTML =
+                        `<div class="text-red-600 p-4 bg-red-50 rounded-lg"><i class="fas fa-exclamation-triangle mr-2"></i>${escapeHtml(result.error)}</div>`;
+                }
+            } catch (e) {
+                document.getElementById('summaryContent').innerHTML =
+                    `<div class="text-red-600 p-4 bg-red-50 rounded-lg">Network error: ${escapeHtml(e.message)}</div>`;
+            }
+        }
+
+        function renderSummary(s, job) {
+            const sec = (title, icon, color, content) =>
+                `<div class="rounded-lg border p-4">
+                    <h3 class="font-bold text-sm ${color} mb-2"><i class="${icon} mr-2"></i>${title}</h3>
+                    ${content}
+                </div>`;
+
+            const tags = (arr, cls) => arr && arr.length
+                ? arr.map(x => `<span class="skill-tag ${cls}">${escapeHtml(x)}</span>`).join('')
+                : '<span class="text-gray-400 text-xs">None listed</span>';
+
+            const bullets = (arr) => arr && arr.length
+                ? `<ul class="list-disc list-inside space-y-1 text-sm text-gray-700">${arr.map(b=>`<li>${escapeHtml(b)}</li>`).join('')}</ul>`
+                : '<p class="text-gray-400 text-xs">Not specified</p>';
+
+            let html = `
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                    <div class="bg-blue-50 rounded-lg p-3">
+                        <p class="text-xs text-gray-500 font-medium">Role</p>
+                        <p class="font-bold text-gray-800">${escapeHtml(s.role_title || '—')}</p>
+                    </div>
+                    <div class="bg-blue-50 rounded-lg p-3">
+                        <p class="text-xs text-gray-500 font-medium">Company</p>
+                        <p class="font-bold text-gray-800">${escapeHtml(s.company || '—')}</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-xs text-gray-500 font-medium">Location</p>
+                        <p class="font-semibold text-gray-700">${escapeHtml(s.location || '—')}</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-xs text-gray-500 font-medium">Work Type</p>
+                        ${workTypeBadge(s.work_type)}
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-xs text-gray-500 font-medium">Experience</p>
+                        <p class="font-semibold text-gray-700">${escapeHtml(s.experience_years || 'N/A')}</p>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-3">
+                        <p class="text-xs text-gray-500 font-medium">Compensation</p>
+                        <p class="font-semibold text-green-700">${escapeHtml(s.compensation || 'Not listed')}</p>
+                    </div>
+                </div>
+                ${sec('Required Skills', 'fas fa-check-circle', 'text-blue-700', `<div class="flex flex-wrap">${tags(s.required_skills, 'req-skill')}</div>`)}
+                ${s.nice_to_have_skills && s.nice_to_have_skills.length ? sec('Nice to Have', 'fas fa-star', 'text-purple-700', `<div class="flex flex-wrap">${tags(s.nice_to_have_skills, 'nice-skill')}</div>`) : ''}
+                ${s.key_responsibilities && s.key_responsibilities.length ? sec('Key Responsibilities', 'fas fa-tasks', 'text-gray-700', bullets(s.key_responsibilities)) : ''}
+                ${s.requirements && s.requirements.length ? sec('Requirements', 'fas fa-clipboard-list', 'text-gray-700', bullets(s.requirements)) : ''}
+                <div class="rounded-lg border-2 border-indigo-200 bg-indigo-50 p-4">
+                    <h3 class="font-bold text-sm text-indigo-700 mb-2">
+                        <i class="fas fa-lightbulb mr-2"></i>Resume Tailoring Notes
+                        ${s.ai_powered ? '<span class="ml-2 text-xs bg-indigo-200 text-indigo-800 px-2 py-0.5 rounded-full">AI-powered</span>' : ''}
+                    </h3>
+                    <p class="text-sm text-indigo-900 leading-relaxed">${escapeHtml(s.resume_tailoring_notes || '')}</p>
+                </div>
+                ${s.ai_error ? `<div class="text-xs text-orange-600 bg-orange-50 p-2 rounded">⚠ AI fallback used: ${escapeHtml(s.ai_error)}</div>` : ''}
+            `;
+            document.getElementById('summaryContent').innerHTML = html;
+            document.getElementById('panelTitle').textContent = s.role_title || 'Job Analysis';
+            document.getElementById('panelSubtitle').textContent = s.company && s.company !== 'See email' ? s.company : (job ? job.sender.name : '');
+        }
+
+        // ── Compose / Reply ───────────────────────────────────
+        async function openCompose(emailId) {
+            activeEmailId = emailId;
+            document.getElementById('composeTo').value = '';
+            document.getElementById('composeSubject').value = '';
+            document.getElementById('composeBody').value = 'Generating AI reply…';
+            document.getElementById('composeAiBadge').classList.add('hidden');
+            document.getElementById('composeError').classList.add('hidden');
+            document.getElementById('composeSuccess').classList.add('hidden');
+            document.getElementById('composeModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            await loadDraft(emailId);
+        }
+
+        async function loadDraft(emailId) {
+            try {
+                const res = await fetch(`/api/jobs/${emailId}/draft-reply`, { method: 'POST' });
+                const result = await res.json();
+                if (result.success) {
+                    const d = result.draft;
+                    document.getElementById('composeTo').value = d.to || '';
+                    document.getElementById('composeSubject').value = d.subject || '';
+                    document.getElementById('composeBody').value = d.body || '';
+                    if (d.ai_powered) document.getElementById('composeAiBadge').classList.remove('hidden');
+                } else {
+                    document.getElementById('composeBody').value = '';
+                    showComposeError(result.error);
+                }
+            } catch(e) {
+                document.getElementById('composeBody').value = '';
+                showComposeError(e.message);
+            }
+        }
+
+        async function regenerateDraft() {
+            if (!activeEmailId) return;
+            document.getElementById('composeBody').value = 'Regenerating…';
+            document.getElementById('composeAiBadge').classList.add('hidden');
+            await loadDraft(activeEmailId);
+        }
+
+        async function sendReply() {
+            const to      = document.getElementById('composeTo').value.trim();
+            const subject = document.getElementById('composeSubject').value.trim();
+            const body    = document.getElementById('composeBody').value.trim();
+            if (!to || !body) { showComposeError('To and body are required.'); return; }
+
+            const btn = document.getElementById('sendBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner spinner mr-2"></i>Sending…';
+            document.getElementById('composeError').classList.add('hidden');
+
+            try {
+                const attachResume = document.getElementById('attachResumeChk').checked;
+                const res = await fetch(`/api/jobs/${activeEmailId}/send-reply`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ to, subject, body, attach_resume: attachResume })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    document.getElementById('composeSuccess').textContent = `✓ ${result.message}`;
+                    document.getElementById('composeSuccess').classList.remove('hidden');
+                    const idx = allJobs.findIndex(j => j.email_id === activeEmailId);
+                    if (idx !== -1) { allJobs[idx].replied = true; renderJobs(filteredJobs); }
+                    setTimeout(closeComposeModal, 1800);
+                } else {
+                    showComposeError(result.error);
+                }
+            } catch(e) { showComposeError(e.message); }
+            finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane mr-1"></i>Send';
+            }
+        }
+
+        function showComposeError(msg) {
+            const el = document.getElementById('composeError');
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+
+        function closeComposeModal() {
+            document.getElementById('composeModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // ── Tailor Resume ─────────────────────────────────────
+        async function tailorResume() {
+            if (!activeEmailId) return;
+            const btn = document.getElementById('tailorBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner spinner mr-2"></i>Generating…';
+            try {
+                const res = await fetch(`/api/jobs/${activeEmailId}/tailor-resume`, { method:'POST' });
+                const result = await res.json();
+                if (result.success) {
+                    currentResumeHtml = result.resume_html;
+                    const job = allJobs.find(j => j.email_id === activeEmailId);
+                    const role = job?.ai_summary?.role_title || 'Tailored';
+                    document.getElementById('resumeModalTitle').textContent = `Resume — ${role}`;
+                    showResumeModal(result.resume_html);
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch(e) { alert('Error: ' + e.message); }
+            finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-file-alt mr-2"></i>Generate Tailored Resume';
+            }
+        }
+
+        async function quickTailor(emailId) {
+            activeEmailId = emailId;
+            await tailorResume();
+        }
+
+        async function viewBaseResume() {
+            try {
+                const res = await fetch('/api/resume');
+                const result = await res.json();
+                if (result.success) {
+                    currentResumeHtml = result.resume_html;
+                    document.getElementById('resumeModalTitle').textContent = 'Base Resume';
+                    showResumeModal(result.resume_html);
+                } else { alert('Error: ' + result.error); }
+            } catch(e) { alert('Error: ' + e.message); }
+        }
+
+        function showResumeModal(html) {
+            const frame = document.getElementById('resumeFrame');
+            frame.srcdoc = html;
+            document.getElementById('resumeModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeResumeModal() {
+            document.getElementById('resumeModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function downloadResume() {
+            const blob = new Blob([currentResumeHtml], { type:'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const job = allJobs.find(j => j.email_id === activeEmailId);
+            const role = (job?.ai_summary?.role_title || 'resume').replace(/\s+/g, '_');
+            a.download = `Siddhesh_DilipKumar_${role}.html`;
+            a.click();
+        }
+
+        function printResume() {
+            document.getElementById('resumeFrame').contentWindow.print();
+        }
+
+        // ── Panel ─────────────────────────────────────────────
+        function openSummaryPanel() {
+            document.getElementById('summaryPanel').classList.add('open');
+            document.getElementById('summaryOverlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSummaryPanel() {
+            document.getElementById('summaryPanel').classList.remove('open');
+            document.getElementById('summaryOverlay').classList.add('hidden');
+            document.body.style.overflow = '';
+            activeEmailId = null;
+        }
+
+        // ── Refresh / Delete / Cleanup ────────────────────────
+        async function refreshEmails() {
+            const btn = document.getElementById('refreshBtn');
+            const orig = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Refreshing…';
+            try {
+                const res = await fetch('/api/refresh', {
+                    method:'POST', headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify({ max_emails:100, days_back:30 })
+                });
+                const r = await res.json();
+                if (r.success) { alert(r.message); location.reload(); }
+                else { alert('Error: ' + r.error); }
+            } catch(e) { alert('Failed: ' + e.message); }
+            finally { btn.innerHTML = orig; btn.disabled = false; }
+        }
+
+        async function deleteEmail(emailId) {
+            if (!confirm('Delete this email from Gmail? This cannot be undone.')) return;
+            try {
+                const res = await fetch('/api/delete-email', {
+                    method:'POST', headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify({ email_id: emailId })
+                });
+                const r = await res.json();
+                if (r.success) {
+                    allJobs = allJobs.filter(j => j.email_id !== emailId);
+                    filteredJobs = filteredJobs.filter(j => j.email_id !== emailId);
+                    document.getElementById(`job-${emailId}`)?.remove();
+                    document.getElementById('filteredCount').textContent = `(${filteredJobs.length})`;
+                    document.getElementById('jobCount').textContent = allJobs.length;
+                } else { alert('Error: ' + r.error); }
+            } catch(e) { alert('Error: ' + e.message); }
+        }
+
+        async function cleanupOldEmails() {
+            if (!confirm('Delete all emails older than 30 days?')) return;
+            try {
+                const res = await fetch('/api/cleanup-old', {
+                    method:'POST', headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify({ days_old:30 })
+                });
+                const r = await res.json();
+                if (r.success) { alert(r.message); location.reload(); }
+                else { alert('Error: ' + r.error); }
+            } catch(e) { alert('Error: ' + e.message); }
+        }
+
+        // ── CSV Export ────────────────────────────────────────
+        function exportToCSV() {
+            const headers = ['Job Title','Sender Name','Sender Email','Company','Location','Work Type','Experience','Required Skills','Salary','Date'];
+            const rows = filteredJobs.map(j => {
+                const s = j.ai_summary;
+                return [
+                    s ? s.role_title : j.job_title,
+                    j.sender.name, j.sender.email,
+                    s ? (s.company||'') : '',
+                    s ? s.location : j.location,
+                    s ? (s.work_type||'') : '',
+                    s ? s.experience_years : j.experience_level,
+                    s ? (s.required_skills||[]).join('; ') : j.technologies.join('; '),
+                    (s && s.compensation) || j.salary || '',
+                    j.date
+                ];
+            });
+            const csv = [headers,...rows].map(r => r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+            const a = Object.assign(document.createElement('a'), {
+                href: URL.createObjectURL(new Blob([csv],{type:'text/csv'})),
+                download: 'job_analysis.csv'
+            });
+            a.click();
+        }
+
+        // ── Helpers ───────────────────────────────────────────
+        function escapeHtml(t) {
+            if (t == null) return '';
+            const d = document.createElement('div');
+            d.textContent = String(t);
+            return d.innerHTML;
+        }
+
+        function formatDate(d) {
+            try { return new Date(d).toLocaleDateString(); } catch { return d; }
+        }
+
+        function showNoDataMessage() {
+            document.getElementById('jobsList').innerHTML = `
+                <div class="text-center py-12 text-gray-500">
+                    <i class="fas fa-inbox text-6xl mb-4"></i>
+                    <p class="text-lg">No data available</p>
+                    <p class="text-sm mt-2">Click <strong>Refresh</strong> to fetch emails from Gmail</p>
+                </div>`;
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

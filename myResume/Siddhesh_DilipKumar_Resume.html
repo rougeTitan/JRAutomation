@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Siddhesh DilipKumar – Resume</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+      font-size: 9.5pt;
+      color: #1a1a1a;
+      background: #e8e8e8;
+      line-height: 1.45;
+    }
+
+    /* ── A4 Page Shell ── */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 20px auto;
+      background: #fff;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+      padding: 14mm 14mm 12mm 14mm;
+    }
+
+    @media print {
+      body { background: #fff; }
+      .page {
+        margin: 0;
+        box-shadow: none;
+        padding: 12mm 12mm 10mm 12mm;
+        width: 210mm;
+        min-height: 297mm;
+      }
+      @page { size: A4; margin: 0; }
+    }
+
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      padding-bottom: 8px;
+      border-bottom: 2.5px solid #1a3a6b;
+      margin-bottom: 10px;
+    }
+    .header h1 {
+      font-size: 22pt;
+      font-weight: 700;
+      color: #1a3a6b;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .header .contact {
+      font-size: 8.8pt;
+      color: #444;
+      margin-top: 4px;
+    }
+    .header .contact a {
+      color: #1a3a6b;
+      text-decoration: none;
+    }
+    .header .contact a:hover { text-decoration: underline; }
+    .header .contact span { margin: 0 5px; color: #bbb; }
+
+    /* ── Section Heading ── */
+    .section-title {
+      font-size: 9.8pt;
+      font-weight: 700;
+      color: #fff;
+      background: #1a3a6b;
+      padding: 3px 8px;
+      margin: 10px 0 6px 0;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    /* ── Summary ── */
+    .summary ul {
+      list-style: none;
+      padding: 0;
+    }
+    .summary ul li {
+      padding: 1.5px 0 1.5px 13px;
+      position: relative;
+      color: #222;
+    }
+    .summary ul li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: #1a3a6b;
+      font-size: 8pt;
+      top: 2px;
+    }
+
+    /* ── Technical Skills Table ── */
+    .skills-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .skills-table td {
+      padding: 2.5px 6px;
+      vertical-align: top;
+      font-size: 8.8pt;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .skills-table td:first-child {
+      width: 22%;
+      font-weight: 700;
+      color: #1a3a6b;
+      white-space: nowrap;
+      padding-right: 10px;
+    }
+    .skills-table tr:last-child td { border-bottom: none; }
+
+    /* ── Experience ── */
+    .job { margin-bottom: 9px; }
+
+    .job-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 1px;
+    }
+    .job-title {
+      font-weight: 700;
+      color: #1a3a6b;
+      font-size: 9.8pt;
+    }
+    .job-date {
+      font-size: 8.6pt;
+      color: #555;
+      font-style: italic;
+      white-space: nowrap;
+    }
+    .job-desc {
+      font-size: 8.6pt;
+      color: #555;
+      margin: 2px 0 3px 0;
+      font-style: italic;
+    }
+    .job ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .job ul li {
+      padding: 1.5px 0 1.5px 13px;
+      position: relative;
+      color: #222;
+    }
+    .job ul li::before {
+      content: '•';
+      position: absolute;
+      left: 2px;
+      color: #1a3a6b;
+      font-weight: 700;
+    }
+    .techstack {
+      font-size: 8.3pt;
+      margin-top: 4px;
+      color: #333;
+      background: #f0f4fa;
+      border-left: 3px solid #1a3a6b;
+      padding: 3px 7px;
+    }
+    .techstack strong { color: #1a3a6b; }
+
+    /* ── Projects ── */
+    .projects ul {
+      list-style: none;
+      padding: 0;
+    }
+    .projects ul li {
+      padding: 1.5px 0 1.5px 13px;
+      position: relative;
+      color: #222;
+    }
+    .projects ul li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: #1a3a6b;
+      font-size: 8pt;
+      top: 2px;
+    }
+
+    /* ── Certifications ── */
+    .cert-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .cert-item {
+      flex: 1 1 30%;
+      background: #f0f4fa;
+      border-left: 3px solid #1a3a6b;
+      padding: 4px 8px;
+      font-size: 8.6pt;
+    }
+    .cert-item .cert-name { font-weight: 700; color: #1a3a6b; }
+    .cert-item .cert-date { color: #555; font-size: 8pt; }
+
+    /* ── Education ── */
+    .education {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .edu-degree { font-weight: 700; color: #1a3a6b; font-size: 9.5pt; }
+    .edu-date { font-size: 8.6pt; color: #555; font-style: italic; }
+
+    /* ── Divider ── */
+    .job-divider {
+      border: none;
+      border-top: 1px dashed #dde3ee;
+      margin: 7px 0;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <div class="header">
+    <h1>Siddhesh DilipKumar</h1>
+    <div class="contact">
+      <a href="mailto:siddheshdilipkumar@gmail.com">siddheshdilipkumar@gmail.com</a>
+      <span>|</span>
+      617-697-3776
+      <span>|</span>
+      <a href="https://www.linkedin.com/in/siddhesh-dilipkumar" target="_blank">LinkedIn</a>
+      <span>|</span>
+      <a href="https://github.com/siddheshdilipkumar" target="_blank">GitHub</a>
+    </div>
+  </div>
+
+  <!-- ═══════════ SUMMARY ═══════════ -->
+  <div class="section-title">Professional Summary</div>
+  <div class="summary">
+    <ul>
+      <li>7+ years of professional experience as a Software Engineer specializing in full-stack application development using Java, Spring Boot, Kafka, Angular, Node.js (Express, NestJS), React.js, and Ionic.</li>
+      <li>Strong expertise in building scalable, enterprise-grade applications using Microservices, Event-Driven, and Layered Architectures, with hands-on experience in web services development (SOAP, REST, GraphQL) aligned to OpenAPI specifications and applying core software design patterns including Singleton, Factory, Proxy, Builder, MVC, Decorator, and Adapter.</li>
+      <li>Implemented modular Angular applications and familiar with micro-frontend architecture for large-scale applications.</li>
+      <li>Skilled in CI/CD pipeline creation and DevOps practices using Git, Jenkins, GitHub Actions, AWS CI/CD, CloudBees Flow, Kubernetes, and Docker.</li>
+      <li>Experienced in designing and executing comprehensive automated and manual test strategies across web and mobile platforms using tools such as JUnit, Cucumber, Playwright, Appium, Jasmine, Jest, Karma, and Mockito, ensuring robust functional, smoke and end to end testing integrated within CI/CD pipelines using Jenkins, Docker, and Kubernetes for high-quality, production-ready releases.</li>
+      <li>Proficient in database technologies including Oracle SQL, MySQL, PostgreSQL, Redis, AWS DynamoDB, and MongoDB.</li>
+      <li>Actively exploring AI and Large Language Model (LLM) technologies including GitHub Copilot, AWS SageMaker, Bedrock, and AWS Q to accelerate domain-specific application development.</li>
+      <li>Hands-on experience in observability and monitoring using AWS X-Ray, CloudWatch, Prometheus, Splunk, and Grafana in cloud-native environments.</li>
+      <li>Hands-on experience with Linux for deployments, log analysis, and resolving server-side errors.</li>
+      <li>Involved in all phases of the Software Development Life Cycle (SDLC), with strong knowledge of project management practices including requirements gathering, system design, estimation, planning, and documentation with experience working in Agile, Kanban, and Waterfall methodologies.</li>
+      <li>Proficient in resolving JVM performance issues by analysing thread dumps, heap memory, and GC logs.</li>
+      <li>Proficient in implementing multi-threaded solutions and concurrency optimization for performance-critical components.</li>
+      <li>Containerized microservices and legacy applications using Docker and Kubernetes, enabling consistent deployments, faster scaling, and simplified CI/CD integration across multiple environments.</li>
+      <li>Oversaw the complete software development lifecycle from concept through deployment, while producing comprehensive technical documentation, feasibility assessments, and deployment guides to support maintainability and cross-functional collaboration.</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════ TECHNICAL SKILLS ═══════════ -->
+  <div class="section-title">Technical Skills</div>
+  <table class="skills-table">
+    <tr>
+      <td>Programming Languages</td>
+      <td>Java 16, 17, Java 21, Python 3.</td>
+    </tr>
+    <tr>
+      <td>AWS</td>
+      <td>IAM, EC2, Elastic File System (EFS), Elastic Block Storage (EBS), S3, Elastic Load Balancer (ELB), Auto Scaling Group (ASG), CloudFront, Elastic Container Service (ECS), Amazon Machine Image (AMI), CloudFormation, Elastic Beanstalk, Route 53, Lambda, CICD, KMS, API Gateway, Serverless Application Management (SAM), X-Ray, CloudWatch, CDK.</td>
+    </tr>
+    <tr>
+      <td>Web &amp; Mobile Development</td>
+      <td>HTML5, CSS3, TypeScript, JavaScript, Angular 19, React, Node 22.13.1, RxJS, NgRx, Ionic, Capacitor.</td>
+    </tr>
+    <tr>
+      <td>Backend &amp; Middleware</td>
+      <td>Servlets, JMS, JSP, Spring Boot 3, Spring Cloud, Spring Security (OAuth2, JWT, API Gateway Security), Struts 2, Hibernate, JDBC, Kafka, REST, SOAP, OpenAPI.</td>
+    </tr>
+    <tr>
+      <td>Application Testing</td>
+      <td>JUnit, Cucumber, Jasmine, Jest, Karma, Playwright, Appium, Postman, Karate.</td>
+    </tr>
+    <tr>
+      <td>Build &amp; Deployment</td>
+      <td>Maven, Gradle, NPM, Jenkins, CloudBees Flow, Kubernetes, Docker, GitHub Actions, GIT.</td>
+    </tr>
+    <tr>
+      <td>Version Control</td>
+      <td>Git, Bitbucket, SourceTree.</td>
+    </tr>
+    <tr>
+      <td>Reporting &amp; Monitoring</td>
+      <td>Splunk, Grafana, Prometheus.</td>
+    </tr>
+    <tr>
+      <td>Project Management</td>
+      <td>JIRA, VersionOne, Confluence, Digital AI.</td>
+    </tr>
+    <tr>
+      <td>AI Tools</td>
+      <td>GitHub Copilot, AWS SageMaker, AWS Q, AWS Bedrock.</td>
+    </tr>
+    <tr>
+      <td>Databases</td>
+      <td>Oracle SQL, MySQL, GraphQL, MongoDB, Redis, AWS DynamoDB.</td>
+    </tr>
+    <tr>
+      <td>Operating Systems</td>
+      <td>Linux, Windows, MacOS, Shell Scripting.</td>
+    </tr>
+  </table>
+
+  <!-- ═══════════ PROFESSIONAL EXPERIENCE ═══════════ -->
+  <div class="section-title">Professional Experience</div>
+
+  <!-- BNY Mellon -->
+  <div class="job">
+    <div class="job-header">
+      <span class="job-title">BNY Mellon &nbsp;|&nbsp; Senior Software Engineer</span>
+      <span class="job-date">Nov 2025 – Present</span>
+    </div>
+    <ul>
+      <li>Led enterprise AI extraction platform integrating LLM inference, Drools rules validation, and multi-source data enrichment for 100K+ facility records with 85%+ accuracy.</li>
+      <li>Architected MCP (Model Context Protocol) integrations connecting AI agents to Snowflake, Oracle, and NAS data sources with standardized connectivity patterns.</li>
+      <li>Delivered full-stack AI Accuracy Dashboard (Angular 17 + Spring Boot) with 30-day rolling analytics and real-time exception monitoring.</li>
+      <li>Designed multi-agency credit ratings ETL pipeline (S&amp;P, Moody's, Fitch) with fault-tolerant chunked ingestion and checkpoint recovery.</li>
+      <li>Spearheaded memory optimization initiative achieving 60% heap reduction by resolving systemic leaks and implementing streaming data patterns.</li>
+      <li>Architected distributed caching layer using Hazelcast IMDG, reducing API latency by 40% across AI inference and master data services.</li>
+      <li>Owned external API integrations (GCG, FDIC, CSQ Oracle) with resilient fallback patterns ensuring 99.9% data availability.</li>
+      <li>Drove code quality standards resolving 50+ SonarQube issues and achieving 85%+ mutation test coverage across critical services.</li>
+      <li>Delivered 36 JIRA stories and 270+ commits with consistent on-time delivery collaborating across Product, Data Science, and DevOps teams.</li>
+    </ul>
+    <div class="techstack"><strong>Tech Stack:</strong> Java 17, Spring Boot, Angular 17, Python, Drools, Snowflake, Oracle, Hazelcast, LLM/AI Agents, MCP, Prompt Engineering, GitLab CI/CD.</div>
+  </div>
+
+  <hr class="job-divider"/>
+
+  <!-- FedEx SOS -->
+  <div class="job">
+    <div class="job-header">
+      <span class="job-title">FedEx Shipment Operational Systems, Pittsburgh, PA &nbsp;|&nbsp; Full-Stack Developer – Level III</span>
+      <span class="job-date">Jan 2025 – Sep 2025</span>
+    </div>
+    <div class="job-desc">FedEx Shipment Operational Systems refer to the various technologies and processes that FedEx uses to manage and track shipments from the moment they are picked up to the moment they are delivered. These systems include software for shipping, tracking, rating, and routing, as well as hardware for monitoring environmental conditions and location during transit.</div>
+    <ul>
+      <li>Developed and modernized full-stack internal applications such as Package Inquiry, FIMI (FedEx ID Master Index), and Ops Activity using Java 16, Spring Boot 3, and Angular 19, replacing legacy systems built on COMMON DATA Service and ICEFaces through reverse engineering techniques.</li>
+      <li>Implemented API Gateway security policies (rate limiting, throttling) to safeguard high-traffic services handling 4M+ daily requests.</li>
+      <li>Implemented Redis caching to optimize performance and reduce backend service calls by 10%.</li>
+      <li>Utilized Kafka streams for real-time processing of error logging by publishing production errors to a Kafka topic, later ingested into Teradata for centralized warehousing and analytics.</li>
+      <li>Designed and secured REST APIs and microservices using Spring Security with JWT/OAuth2 for authentication and authorization, ensuring compliance with enterprise security standards.</li>
+      <li>Built scalable, reusable Angular 19 components using strict typing, modular architecture, and lazy loading; leveraged Bootstrap, Angular Material, and CSS Grid/Flexbox to deliver responsive, pixel-perfect layouts in close collaboration with UI/UX teams using Figma designs and mock-ups.</li>
+      <li>Contributed to the development of the Metric Query Service, enabling efficient retrieval and analysis of audit and error logs across Splunk, and Prometheus enhancing observability, resolving production incidents and business intelligence.</li>
+      <li>Managed CI/CD pipelines and automated deployments across development, testing, and production environments using GitHub Actions, Docker, and Kubernetes.</li>
+      <li>Ensured proactive monitoring and rapid incident response using tools like AppDynamics, Splunk, Prometheus, and Grafana.</li>
+      <li>Implemented and maintained comprehensive unit, smoke, and regression tests using Jest, Karma, Jasmine, and JUnit to ensure end-to-end reliability across both the frontend and backend components.</li>
+      <li>Provided technical mentorship and support to team members, promoting engineering best practices and fostering continuous skill development.</li>
+    </ul>
+    <div class="techstack"><strong>Tech Stack:</strong> Java 16, Spring Boot 3, Node.js 22.13.1, Angular 19, TypeScript, JavaScript, NgRx, RxJS, Bootstrap, Angular Material, Playwright, Jest, Jasmine, Karma, JUnit, Kafka, JMS, Redis, Kubernetes, Docker, Jenkins, GitHub Actions, GitHub Copilot, Splunk, AppDynamics, Prometheus, Grafana, Git, GitHub, Teradata, Figma.</div>
+  </div>
+
+  <hr class="job-divider"/>
+
+  <!-- Fidelity -->
+  <div class="job">
+    <div class="job-header">
+      <span class="job-title">Fidelity Investments, RDU, NC &nbsp;|&nbsp; Full Stack Developer</span>
+      <span class="job-date">Mar 2023 – Dec 2024</span>
+    </div>
+    <ul>
+      <li>Contributed to the development of NetBenefits, a hybrid mobile platform for managing employee benefits and retirement savings, by designing and maintaining scalable features using Ionic 7, Angular 16, Node.js, NgRx, and Capacitor.</li>
+      <li>Played a key role in delivering major features like Message Center, Profile Toggle, Learn Hub, and Estimated Retirement Income, resulting in measurable gains such as a 4% increase in customer engagement and 3.5% YoY growth in retirement contributions.</li>
+      <li>Spearheaded the Plan Page redesign for Microsoft onboarding, contributing to a $65M net profit on a $16M investment.</li>
+      <li>Integrated RESTful and GraphQL APIs, enhanced UI/UX with responsive design per Fidelity standards, and utilized Kafka streams, SQS/SNS, and Adobe Dashboard for backend sync and performance analytics.</li>
+      <li>Conducted cross-platform automation testing using Jest, Appium, and Playwright, managed deployment pipelines via Kubernetes, Jenkins, and GitHub.</li>
+      <li>Built robust UI automation frameworks using Playwright, Cucumber, and BDD, integrated into CI/CD pipelines (Jenkins and Docker) to accelerate release cycles.</li>
+      <li>Reduced manual regression effort by 60% through custom test automation solutions, enhancing coverage and reliability.</li>
+      <li>Design, develop, document, and maintain end-to-end test automation.</li>
+      <li>Conduct manual testing where needed on Android and iOS devices, collaborate in test reviews, manage defect tracking, and provide test sign-off.</li>
+    </ul>
+  </div>
+
+  <hr class="job-divider"/>
+
+  <!-- ThermoFisher -->
+  <div class="job">
+    <div class="job-header">
+      <span class="job-title">ThermoFisher Scientific, Austin, TX &nbsp;|&nbsp; Software Developer – Level III</span>
+      <span class="job-date">Feb 2021 – Mar 2023</span>
+    </div>
+    <ul>
+      <li>Led full-stack development for an enterprise-grade application using Java 8, Spring Boot, Struts 2, AngularJS, and AWS, contributing to the Magellan Search platform. Delivered revenue-impacting features like the Gallery Module (15–20% of quarterly revenue) and Epitope Search (5% revenue increase).</li>
+      <li>Built responsive and user-friendly UIs with AngularJS, JSP, Bootstrap, and jQuery, integrating both SOAP and REST APIs to support seamless data communication across services.</li>
+      <li>Implemented Jenkins CI/CD pipelines integrated with AWS ECS for streamlined multi-cluster deployments, ensuring consistent delivery across development, QA, and production environments.</li>
+      <li>Utilized AWS EFS and S3 to upload and manage antibody and medical product documentation and static content, ensuring high availability and accessibility across multiple AWS availability zones.</li>
+      <li>Deployed Genesys Cloud Chat across multiple availability zones using AWS CloudFormation templates, integrating it into the Magellan Search application to enable real-time customer support and contributing to a 10% YoY increase in sales.</li>
+      <li>Developed a Spring Batch application to validate chat service eligibility across 300,000+ products stored in S3, improving operational efficiency and service personalization.</li>
+      <li>Leveraged AWS X-Ray, CloudWatch, and Splunk for comprehensive troubleshooting and observability across development and production environments, accelerating root cause analysis and incident resolution.</li>
+    </ul>
+  </div>
+
+  <hr class="job-divider"/>
+
+  <!-- FedEx Ground -->
+  <div class="job">
+    <div class="job-header">
+      <span class="job-title">FedEx Ground, Pittsburgh, PA &nbsp;|&nbsp; Software Engineer – Level II</span>
+      <span class="job-date">Feb 2020 – Feb 2021</span>
+    </div>
+    <ul>
+      <li>Contributed to the modernization of legacy systems at FedEx Ground by developing and enhancing a cross-platform package tracking application using Java 8, Angular 8, and Angular Material; built modular, reusable UI components and optimized RESTful services for seamless integration with the Common Database Service (CDS) to retrieve packaging details.</li>
+      <li>Implemented Redis caching layer to reduce database calls to the Common Database Service (CDS) to support front-end-backend communication, while ensuring reliability.</li>
+      <li>Implemented persistence layer using Spring Data JPA for efficient CRUD operations and optimized complex queries for high-performance transaction processing.</li>
+      <li>Designed and implemented robust CI/CD pipelines using Jenkins and CloudBees Flow to automate application deployment on Pivotal Cloud Foundry (PCF) across development and production environments, improving release consistency and deployment speed.</li>
+      <li>Provided technical mentorship to team members new to the Angular framework, ensuring adherence to FedEx UI standards and promoting best practices to deliver high-quality, user-centric interfaces, resulting in improved customer satisfaction and team velocity.</li>
+    </ul>
+  </div>
+
+  <hr class="job-divider"/>
+
+  <!-- Tracelink -->
+  <div class="job">
+    <div class="job-header">
+      <span class="job-title">Tracelink.inc, North Reading, MA &nbsp;|&nbsp; Software Developer</span>
+      <span class="job-date">Nov 2019 – Feb 2020</span>
+    </div>
+    <ul>
+      <li>Designed and contributed to a metadata-driven, low-code architecture using AWS services, including EKS (Kubernetes), S3, CloudFront, and Lambda, enabling scalable deployments and efficient infrastructure management within TraceLink's Digital Network Platform (DNP).</li>
+      <li>Developed reusable and dynamic UI components using Angular 9, integrated with backend GraphQL APIs and metadata-driven schemas to support drag-and-drop UI assembly in the Experience Design Environment (XDE).</li>
+      <li>Engineered cohesive interactions across Experience, Application, and Infrastructure layers, aligning microservice logic, data modelling, and AWS-native services for secure, observable, and performant enterprise applications.</li>
+    </ul>
+  </div>
+
+  <hr class="job-divider"/>
+
+  <!-- PNC -->
+  <div class="job">
+    <div class="job-header">
+      <span class="job-title">PNC Financial Service, Pittsburgh, PA &nbsp;|&nbsp; Software Engineer</span>
+      <span class="job-date">Oct 2018 – Oct 2019</span>
+    </div>
+    <ul>
+      <li>Developed and enhanced PNC Bank's Cash Flow Insight (digital cash management) by building scalable backend services and APIs using Java 8, Spring Boot, REST, SOAP, and Microservices architectures.</li>
+      <li>Migrated monolithic APIs to modern REST services consumed by redesigned online banking platforms, while authoring detailed Swagger/OpenAPI documentation to ensure API clarity and standardization.</li>
+      <li>Enhanced UI/UX by developing dynamic components using JSP, JavaScript, jQuery, and Angular 8. Improved frontend reliability by building unit, integration, and regression test suites.</li>
+      <li>Leveraged Dynatrace for proactive production monitoring and performance optimization.</li>
+      <li>Developed and maintained Jenkins pipelines to deploy applications across multiple environments and on WebSphere Application Server.</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════ HANDS-ON PROJECTS ═══════════ -->
+  <div class="section-title">Hands-On Projects &nbsp;<span style="font-weight:400;font-size:8.5pt;">March 2025 – Present</span></div>
+  <div class="projects">
+    <ul>
+      <li>Developed a diverse portfolio of AI-driven applications leveraging cutting-edge AWS services, including AWS Bedrock, Lambda, API Gateway, S3, LangChain, embedded vector databases, knowledge bases, and guardrails while leveraging foundation models such as Cohere, Titan, Llama, Claude 3, and Anthropic to build solutions including image generators, text summarization tools, chatbots, HR Q&amp;A systems, e-learning platforms, and retail banking agents.</li>
+      <li>Designed and implemented a Marketing Management AI Assistant using AWS Q service to support marketing managers in campaign creation, including features for automated feedback reporting, client email drafting, and intelligent document-based information retrieval for enhanced decision-making.</li>
+      <li>Built generative AI applications following best practices such as foundation model selection, data engineering, feature selection, fine-tuning, and prompt engineering to deliver highly relevant and customized content tailored to user needs. Employed AWS SageMaker to develop and experiment with AI/ML models across multiple domains, including employee salary prediction, medical insurance premium estimation, retail sales forecasting, and traffic sign classification. Applied advanced algorithms such as Linear Learner, Multiple Linear Regression, XGBoost, and Convolutional Neural Networks to achieve accurate predictive outcomes.</li>
+      <li>E-commerce App with Node.js, Express, MongoDB – Built an e-commerce platform with user authentication, admin product management, shopping cart and PDF invoice generation. Integrated CSRF protection, secure password hashing, input validation, and HTTPS support. Implemented role-based access, session persistence with MongoDB, and responsive EJS templates.</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════ CERTIFICATIONS ═══════════ -->
+  <div class="section-title">Certifications</div>
+  <div class="cert-grid">
+    <div class="cert-item">
+      <div class="cert-name">AWS Certified Cloud Practitioner</div>
+      <div class="cert-date">March 2025</div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-name">AWS Certified AI Practitioner</div>
+      <div class="cert-date">June 2025</div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-name">AWS Certified Developer Associate</div>
+      <div class="cert-date">Expected – October 2025</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ EDUCATION ═══════════ -->
+  <div class="section-title">Education</div>
+  <div class="education">
+    <span class="edu-degree">MS in Software Engineering &nbsp;–&nbsp; Stevens Institute of Technology, Hoboken, NJ</span>
+    <span class="edu-date">Jan 2016 – Aug 2017</span>
+  </div>
+
+</div>
+</body>
+</html>

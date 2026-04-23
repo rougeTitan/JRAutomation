@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Siddhesh – AI Engineer Study Roadmap</title>
+  <style>
+    :root {
+      --navy: #0f2244;
+      --blue: #1a3a6b;
+      --accent: #2563eb;
+      --green: #16a34a;
+      --yellow: #ca8a04;
+      --red: #dc2626;
+      --purple: #7c3aed;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --muted: #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); }
+
+    /* ── HEADER ── */
+    .hero {
+      background: linear-gradient(135deg, #0f2244 0%, #1e40af 100%);
+      color: white; padding: 40px 32px 32px;
+      text-align: center;
+    }
+    .hero h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; }
+    .hero p  { opacity: .8; margin-top: 8px; font-size: 1rem; }
+    .hero .badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+    .badge {
+      background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+      padding: 4px 14px; border-radius: 999px; font-size: .8rem; font-weight: 600;
+    }
+
+    /* ── PROGRESS DASHBOARD ── */
+    .dashboard {
+      max-width: 1100px; margin: 28px auto 0; padding: 0 20px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;
+    }
+    .stat-card {
+      background: var(--card); border-radius: 12px; padding: 18px 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.07); border: 1px solid var(--border);
+      text-align: center;
+    }
+    .stat-card .num { font-size: 2rem; font-weight: 800; color: var(--accent); }
+    .stat-card .lbl { font-size: .78rem; color: var(--muted); margin-top: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+    .progress-bar-wrap { background: #e2e8f0; border-radius: 999px; height: 8px; margin-top: 10px; overflow: hidden; }
+    .progress-bar-fill  { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #2563eb, #7c3aed); transition: width .5s; }
+
+    /* ── LAYOUT ── */
+    .main { max-width: 1100px; margin: 24px auto 60px; padding: 0 20px; }
+
+    /* ── TABS ── */
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+    .tab-btn {
+      padding: 8px 20px; border-radius: 8px; border: 2px solid var(--border);
+      background: var(--card); font-weight: 600; font-size: .88rem; cursor: pointer;
+      transition: all .2s; color: var(--muted);
+    }
+    .tab-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .tab-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── PHASE CARD ── */
+    .phase {
+      background: var(--card); border-radius: 14px; margin-bottom: 22px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.07); border: 1px solid var(--border); overflow: hidden;
+    }
+    .phase-header {
+      display: flex; align-items: center; gap: 14px; padding: 18px 22px;
+      cursor: pointer; user-select: none; transition: background .2s;
+    }
+    .phase-header:hover { background: #f8fafc; }
+    .phase-num {
+      width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0; color: white;
+    }
+    .phase-header h2 { font-size: 1.05rem; font-weight: 700; flex: 1; }
+    .phase-meta { font-size: .78rem; color: var(--muted); font-weight: 500; }
+    .phase-chevron { font-size: 1.1rem; color: var(--muted); transition: transform .3s; }
+    .phase.open .phase-chevron { transform: rotate(180deg); }
+    .phase-body { display: none; padding: 0 22px 20px; border-top: 1px solid var(--border); }
+    .phase.open .phase-body { display: block; }
+
+    /* ── WEEK ── */
+    .week { margin-top: 18px; }
+    .week-title {
+      font-size: .82rem; font-weight: 700; text-transform: uppercase; letter-spacing: .7px;
+      color: var(--muted); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px dashed var(--border);
+    }
+
+    /* ── TASK ── */
+    .task {
+      display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px;
+      border-radius: 8px; margin-bottom: 6px; border: 1px solid transparent;
+      transition: all .2s; cursor: pointer;
+    }
+    .task:hover { background: #f8fafc; border-color: var(--border); }
+    .task.done { opacity: .55; }
+    .task.done .task-title { text-decoration: line-through; }
+    .task-check {
+      width: 20px; height: 20px; border-radius: 5px; border: 2px solid #cbd5e1;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      margin-top: 1px; transition: all .2s; background: white;
+    }
+    .task.done .task-check { background: var(--green); border-color: var(--green); }
+    .task-check::after { content: '✓'; color: white; font-size: .75rem; font-weight: 800; display: none; }
+    .task.done .task-check::after { display: block; }
+    .task-content { flex: 1; }
+    .task-title { font-weight: 600; font-size: .9rem; }
+    .task-desc { font-size: .8rem; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+    .task-pills { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
+    .pill {
+      font-size: .7rem; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+    }
+    .pill-red    { background: #fee2e2; color: #dc2626; }
+    .pill-yellow { background: #fef9c3; color: #ca8a04; }
+    .pill-green  { background: #dcfce7; color: #16a34a; }
+    .pill-purple { background: #ede9fe; color: #7c3aed; }
+    .pill-blue   { background: #dbeafe; color: #2563eb; }
+    .task-hours { font-size: .75rem; color: var(--muted); font-weight: 600; white-space: nowrap; margin-top: 2px; }
+
+    /* ── DAILY SCHEDULE ── */
+    .schedule-grid {
+      display: grid; grid-template-columns: 100px 1fr; gap: 0;
+      border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+    }
+    .sched-time {
+      background: #f8fafc; padding: 14px 12px; font-size: .8rem; font-weight: 700;
+      color: var(--accent); border-bottom: 1px solid var(--border); text-align: center;
+    }
+    .sched-content {
+      padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: .88rem;
+    }
+    .sched-content strong { display: block; font-weight: 700; margin-bottom: 2px; }
+    .sched-content span { color: var(--muted); font-size: .8rem; }
+    .sched-time:last-of-type, .sched-content:last-of-type { border-bottom: none; }
+
+    /* ── RESOURCE CARDS ── */
+    .resources-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;
+    }
+    .res-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; box-shadow: 0 1px 4px rgba(0,0,0,.06); transition: box-shadow .2s;
+    }
+    .res-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.1); }
+    .res-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .res-icon {
+      width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center;
+      justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+    }
+    .res-card h3 { font-size: .95rem; font-weight: 700; }
+    .res-card .res-type { font-size: .74rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+    .res-links { display: flex; flex-direction: column; gap: 6px; }
+    .res-link {
+      display: flex; align-items: center; gap: 8px; padding: 7px 10px;
+      background: #f8fafc; border-radius: 7px; text-decoration: none; color: var(--text);
+      font-size: .83rem; font-weight: 500; border: 1px solid var(--border); transition: all .2s;
+    }
+    .res-link:hover { background: var(--accent); color: white; border-color: var(--accent); }
+    .res-link .link-icon { font-size: .9rem; }
+    .res-tag { margin-left: auto; font-size: .7rem; font-weight: 700; opacity: .7; }
+
+    /* ── PYTHON TRACK ── */
+    .py-track {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;
+    }
+    .py-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 16px; border-left: 4px solid var(--purple);
+    }
+    .py-card h4 { font-size: .92rem; font-weight: 700; color: var(--purple); margin-bottom: 6px; }
+    .py-card ul { padding-left: 16px; }
+    .py-card ul li { font-size: .82rem; color: var(--muted); margin-bottom: 4px; }
+    .py-card ul li strong { color: var(--text); }
+
+    /* ── SECTION TITLE ── */
+    .section-title {
+      font-size: 1.1rem; font-weight: 800; color: var(--navy);
+      margin-bottom: 16px; padding-bottom: 8px;
+      border-bottom: 2px solid var(--accent); display: flex; align-items: center; gap: 8px;
+    }
+
+    /* ── TIP BOX ── */
+    .tip {
+      background: #eff6ff; border: 1px solid #bfdbfe; border-left: 4px solid var(--accent);
+      border-radius: 8px; padding: 12px 16px; font-size: .85rem; margin-bottom: 20px;
+      color: #1e40af;
+    }
+    .tip strong { display: block; margin-bottom: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <h1>🚀 AI Engineer Study Roadmap</h1>
+  <p>Personalized 90-day plan · 2–3 hours/day · Siddhesh DilipKumar</p>
+  <div class="badges">
+    <span class="badge">🔴 LangGraph</span>
+    <span class="badge">🔴 RAG Pipelines</span>
+    <span class="badge">🔴 LLM Fine-Tuning</span>
+    <span class="badge">🟡 Python Pro</span>
+    <span class="badge">🟡 Hugging Face</span>
+    <span class="badge">🟡 MLOps</span>
+    <span class="badge">🟢 GraphRAG</span>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="dashboard">
+  <div class="stat-card">
+    <div class="num" id="done-count">0</div>
+    <div class="lbl">Tasks Completed</div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="main-bar" style="width:0%"></div></div>
+  </div>
+  <div class="stat-card">
+    <div class="num" id="total-count">0</div>
+    <div class="lbl">Total Tasks</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">90</div>
+    <div class="lbl">Day Plan</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">2–3h</div>
+    <div class="lbl">Daily Commitment</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">+$60K</div>
+    <div class="lbl">Estimated Salary Delta</div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('roadmap',this)">📍 Roadmap</button>
+    <button class="tab-btn" onclick="switchTab('python',this)">🐍 Python Track</button>
+    <button class="tab-btn" onclick="switchTab('schedule',this)">🕐 Daily Schedule</button>
+    <button class="tab-btn" onclick="switchTab('resources',this)">🎥 Video Resources</button>
+  </div>
+
+  <!-- ══ TAB: ROADMAP ══ -->
+  <div id="tab-roadmap" class="tab-panel active">
+
+    <div class="tip">
+      <strong>💡 How to use this roadmap</strong>
+      Click tasks to mark them done. Progress saves automatically in your browser. Open each phase to see week-by-week breakdown.
+    </div>
+
+    <!-- PHASE 1 -->
+    <div class="phase open" style="border-left: 4px solid #dc2626;">
+      <div class="phase-header" onclick="togglePhase(this)">
+        <div class="phase-num" style="background:#dc2626;">1</div>
+        <div style="flex:1">
+          <h2>Phase 1 — Python Proficiency + Core AI Stack</h2>
+          <div class="phase-meta">Month 1 · Weeks 1–4 · ~56 hours total</div>
+        </div>
+        <span class="phase-chevron">▾</span>
+      </div>
+      <div class="phase-body">
+
+        <div class="week">
+          <div class="week-title">Week 1 — Python Power-Up (2–3h/day)</div>
+
+          <div class="task" id="t1" onclick="toggleTask('t1')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Python Intermediate Bootcamp — OOP, Decorators, Generators</div>
+              <div class="task-desc">Focus: Classes, dunder methods, decorators, generators, iterators, context managers. You already know basics — fast-track to advanced Python used in AI frameworks.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Critical</span>
+                <span class="pill pill-purple">Python</span>
+              </div>
+            </div>
+            <div class="task-hours">3h · Days 1–2</div>
+          </div>
+
+          <div class="task" id="t2" onclick="toggleTask('t2')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Python AsyncIO — async/await, event loops, concurrent tasks</div>
+              <div class="task-desc">Core for agentic AI systems. Build: an async API caller with rate limiting + timeout handling. This is required for LangGraph agentic loops.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Critical</span>
+                <span class="pill pill-purple">Python</span>
+              </div>
+            </div>
+            <div class="task-hours">4h · Days 3–4</div>
+          </div>
+
+          <div class="task" id="t3" onclick="toggleTask('t3')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Python for Data — NumPy, Pandas, Matplotlib basics</div>
+              <div class="task-desc">Required for ML/AI work. Focus on DataFrame ops, data cleaning, vectorized ops. Don't go deep — just get functional.</div>
+              <div class="task-pills">
+                <span class="pill pill-yellow">High</span>
+                <span class="pill pill-purple">Python</span>
+              </div>
+            </div>
+            <div class="task-hours">3h · Days 5–6</div>
+          </div>
+
+          <div class="task" id="t4" onclick="toggleTask('t4')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">FastAPI from scratch — Routes, Pydantic models, async endpoints, middleware</div>
+              <div class="task-desc">Build: A FastAPI service that exposes an AI endpoint (wraps OpenAI API). Deploy locally with uvicorn. You'll use this pattern for every AI microservice.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Critical</span>
+                <span class="pill pill-blue">FastAPI</span>
+              </div>
+            </div>
+            <div class="task-hours">4h · Days 6–7</div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="week-title">Week 2 — Vector Databases + Embeddings</div>
+
+          <div class="task" id="t5" onclick="toggleTask('t5')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Embeddings deep-dive — What they are, how to generate, similarity search</div>
+              <div class="task-desc">Use OpenAI text-embedding-3-small or HuggingFace sentence-transformers. Build a semantic search over 100 documents. Understand cosine similarity vs dot product.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Critical</span>
+                <span class="pill pill-blue">Embeddings</span>
+              </div>
+            </div>
+            <div class="task-hours">3h · Days 8–9</div>
+          </div>
+
+          <div class="task" id="t6" onclick="toggleTask('t6')">
+            <div class="task-content">
+              <div class="task-title">Pinecone — Setup, upsert, query, metadata filtering</div>
+              <div class="task-desc">Free tier available. Ingest 500+ documents, query by semantic similarity, apply metadata filters. This replaces "embedded vector databases" on your resume with a real name.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Critical</span>
+                <span class="pill pill-blue">Vector DB</span>
+              </div>
+            </div>
+            <div class="task-hours">3h · Days 9–10</div>
+          </div>
+          <div class="task" id="t6" onclick="toggleTask('t6')">
+            <div class="task-check"></div>
+
+          </div>
+
+          <div class="task" id="t7" onclick="toggleTask('t7')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">pgvector — Run vector search inside PostgreSQL</div>
+              <div class="task-desc">Install pgvector extension, store embeddings in Postgres, run similarity queries. Bridges your existing SQL skills to AI. Highly valued in enterprise settings.</div>
+              <div class="task-pills">
+                <span class="pill pill-yellow">High</span>
+                <span class="pill pill-blue">Vector DB</span>
+              </div>
+            </div>
+            <div class="task-hours">2h · Day 11</div>
+          </div>
+
+          <div class="task" id="t8" onclick="toggleTask('t8')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Mini-Project: Resume ATS Semantic Search Engine</div>
+              <div class="task-desc">Use your own resume HTML + JDs → embed → store in Pinecone → query by semantic similarity. You already have the ATS app — enhance it with real vector search instead of TF-IDF.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Project</span>
+                <span class="pill pill-blue">Resume Impact</span>
+              </div>
+            </div>
+            <div class="task-hours">5h · Days 12–14</div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="week-title">Week 3 — LangGraph + Agentic AI</div>
+
+          <div class="task" id="t9" onclick="toggleTask('t9')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">LangGraph fundamentals — Nodes, edges, state, conditional routing</div>
+              <div class="task-desc">LangGraph is a state machine for AI agents. Learn: StateGraph, add_node, add_edge, compile, invoke. Build a simple 3-node agent (Plan → Execute → Reflect).</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Critical</span>
+                <span class="pill pill-blue">LangGraph</span>
+              </div>
+            </div>
+            <div class="task-hours">4h · Days 15–16</div>
+          </div>
+
+          <div class="task" id="t10" onclick="toggleTask('t10')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">ReAct + Plan-and-Execute reasoning patterns</div>
+              <div class="task-desc">Implement ReAct (Reason + Act) loop. Build an agent that uses tools (web search, calculator, DB query) to answer multi-step questions.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Critical</span>
+                <span class="pill pill-blue">Agentic AI</span>
+              </div>
+            </div>
+            <div class="task-hours">4h · Days 17–18</div>
+          </div>
+
+          <div class="task" id="t11" onclick="toggleTask('t11')">
+            <div class="task-content">
+              <div class="task-title">MCP + LangGraph integration</div>
+              <div class="task-desc">You already use MCP at BNY Mellon! Connect LangGraph agents to MCP-defined data sources (Snowflake, Oracle). This bridges your real work to the open-source framework.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Critical</span>
+                <span class="pill pill-green">You have MCP exp!</span>
+              </div>
+            </div>
+            <div class="task-hours">3h · Days 19–20</div>
+          </div>
+          <div class="task" id="t11" onclick="toggleTask('t11')">
+            <div class="task-check"></div>
+
+          </div>
+
+          <div class="task" id="t12" onclick="toggleTask('t12')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Mini-Project: Job Application AI Agent</div>
+              <div class="task-desc">Build a LangGraph agent that: reads a JD → analyzes skills → queries Pinecone for resume chunks → generates a tailored cover letter. Extend your ATS app.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Project</span>
+                <span class="pill pill-blue">Portfolio</span>
+              </div>
+            </div>
+            <div class="task-hours">6h · Days 20–21</div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="week-title">Week 4 — Advanced RAG Architectures</div>
+
+          <div class="task" id="t13" onclick="toggleTask('t13')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Chunking Strategies — Fixed, semantic, hierarchical, late chunking</div>
+              <div class="task-desc">Most engineers use naive fixed chunking. Learn: recursive character splitting, semantic chunking with embeddings, sentence-window retrieval. Huge impact on RAG quality.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Critical</span>
+                <span class="pill pill-blue">RAG</span>
+              </div>
+            </div>
+            <div class="task-hours">3h · Days 22–23</div>
+          </div>
+
+          <div class="task" id="t14" onclick="toggleTask('t14')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Hybrid Search — BM25 + semantic + RRF (Reciprocal Rank Fusion)</div>
+              <div class="task-desc">Pure semantic search misses keyword matches. Learn hybrid: BM25 for keyword, embeddings for semantic, fuse with RRF. Implement with LangChain EnsembleRetriever.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Critical</span>
+                <span class="pill pill-blue">RAG</span>
+              </div>
+            </div>
+            <div class="task-hours">3h · Days 24–25</div>
+          </div>
+
+          <div class="task" id="t15" onclick="toggleTask('t15')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Re-ranking — Cohere Rerank, cross-encoders, ColBERT</div>
+              <div class="task-desc">Retrieve 20 docs → re-rank to top 5 → pass to LLM. This dramatically improves answer quality. Cohere Rerank has a free tier — start there.</div>
+              <div class="task-pills">
+                <span class="pill pill-yellow">High</span>
+                <span class="pill pill-blue">RAG</span>
+              </div>
+            </div>
+            <div class="task-hours">2h · Day 26</div>
+          </div>
+
+          <div class="task" id="t16" onclick="toggleTask('t16')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Capstone: Enterprise RAG System with FastAPI + Pinecone + LangGraph</div>
+              <div class="task-desc">Full pipeline: ingest docs → chunk → embed → Pinecone → hybrid search → re-rank → LangGraph agent answers. Expose via FastAPI. Deploy with Docker. Add to GitHub + resume.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Capstone</span>
+                <span class="pill pill-blue">Portfolio ⭐</span>
+              </div>
+            </div>
+            <div class="task-hours">8h · Days 27–28</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PHASE 2 -->
+    <div class="phase" style="border-left: 4px solid #ca8a04;">
+      <div class="phase-header" onclick="togglePhase(this)">
+        <div class="phase-num" style="background:#ca8a04;">2</div>
+        <div style="flex:1">
+          <h2>Phase 2 — Hugging Face + MLOps + Multi-Agent</h2>
+          <div class="phase-meta">Month 2 · Weeks 5–8 · ~60 hours total</div>
+        </div>
+        <span class="phase-chevron">▾</span>
+      </div>
+      <div class="phase-body">
+
+        <div class="week">
+          <div class="week-title">Week 5 — Hugging Face Ecosystem</div>
+
+          <div class="task" id="t17" onclick="toggleTask('t17')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">HuggingFace Transformers — pipeline(), AutoTokenizer, AutoModel</div>
+              <div class="task-desc">Run inference locally: text classification, NER, summarization, embeddings. Learn the pipeline abstraction — it's the easiest entry into HuggingFace.</div>
+              <div class="task-pills">
+                <span class="pill pill-yellow">High</span>
+                <span class="pill pill-purple">HuggingFace</span>
+              </div>
+            </div>
+            <div class="task-hours">3h · Days 29–30</div>
+          </div>
+
+          <div class="task" id="t18" onclick="toggleTask('t18')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Sentence Transformers — bi-encoders for semantic similarity</div>
+              <div class="task-desc">Replace OpenAI embeddings with local sentence-transformers/all-MiniLM-L6-v2. Build semantic search without API costs. Essential for enterprise/private data.</div>
+              <div class="task-pills">
+                <span class="pill pill-yellow">High</span>
+                <span class="pill pill-purple">HuggingFace</span>
+              </div>
+            </div>
+            <div class="task-hours">2h · Day 31</div>
+          </div>
+
+          <div class="task" id="t19" onclick="toggleTask('t19')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">HuggingFace Datasets + Model Hub — push/pull models and datasets</div>
+              <div class="task-desc">Learn to load datasets, push your fine-tuned model to Hub, version models. This is the "GitHub for AI" — having a public HF profile is a resume signal.</div>
+              <div class="task-pills">
+                <span class="pill pill-yellow">High</span>
+                <span class="pill pill-purple">HuggingFace</span>
+              </div>
+            </div>
+            <div class="task-hours">2h · Day 32</div>
+          </div>
+
+          <div class="task" id="t20" onclick="toggleTask('t20')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">HuggingFace Inference Endpoints + Spaces (Gradio/Streamlit demo)</div>
+              <div class="task-desc">Deploy a model to HF Spaces with a Gradio UI. Free tier available. Having a live public demo of your AI project is a major portfolio differentiator.</div>
+              <div class="task-pills">
+                <span class="pill pill-yellow">High</span>
+                <span class="pill pill-blue">Portfolio</span>
+              </div>
+            </div>
+            <div class="task-hours">3h · Days 33–35</div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="week-title">Week 6 — MLOps with MLflow</div>
+
+          <div class="task" id="t21" onclick="toggleTask('t21')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">MLflow — Experiment tracking, run logging, metrics, artifacts</div>
+              <div class="task-desc">MLflow is the most common MLOps tool in enterprise. Log experiments: parameters, metrics, model artifacts. View in MLflow UI. Connect to your SageMaker work.</div>
+              <div class="task-pills">
+                <span class="pill pill-yellow">High</span>
+                <span class="pill pill-blue">MLOps</span>
+              </div>
+            </div>
+            <div class="task-hours">3h · Days 36–37</div>
+          </div>
+
+          <div class="task" id="t22" onclick="toggleTask('t22')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">MLflow Model Registry + Serving — promote models to staging/production</div>
+              <div class="task-desc">Register a model, tag versions, promote to production, serve via mlflow models serve. This is what makes you an MLOps engineer, not just a model builder.</div>
+              <div class="task-pills">
+                <span class="pill pill-yellow">High</span>
+                <span class="pill pill-blue">MLOps</span>
+              </div>
+            </div>
+            <div class="task-hours">3h · Days 38–39</div>
+          </div>
+
+          <div class="task" id="t23" onclick="toggleTask('t23')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Apache Airflow — DAGs, operators, task dependencies, scheduling</div>
+              <div class="task-desc">Build an Airflow DAG that: pulls data → runs embeddings → updates Pinecone index → notifies via Slack. This is a real enterprise AI pipeline pattern.</div>
+              <div class="task-pills">
+                <span class="pill pill-yellow">High</span>
+                <span class="pill pill-blue">MLOps</span>
+              </div>
+            </div>
+            <div class="task-hours">5h · Days 40–42</div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="week-title">Week 7 — CrewAI + Multi-Agent Systems</div>
+
+          <div class="task" id="t24" onclick="toggleTask('t24')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">CrewAI — Agents, Tasks, Crews, role-based collaboration</div>
+              <div class="task-desc">CrewAI defines agents as roles (Researcher, Analyst, Writer). Build a 3-agent crew that researches a company, analyzes financials, writes a report. Very hirable skill.</div>
+              <div class="task-pills">
+                <span class="pill pill-yellow">High</span>
+                <span class="pill pill-blue">Agents</span>
+              </div>
+            </div>
+            <div class="task-hours">4h · Days 43–44</div>
+          </div>
+
+          <div class="task" id="t25" onclick="toggleTask('t25')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">OpenAI Advanced — Function calling, structured outputs, tool use, vision</div>
+              <div class="task-desc">Beyond basic chat completions: JSON mode, function calling for tool use, image inputs with GPT-4o-vision. These power production AI features.</div>
+              <div class="task-pills">
+                <span class="pill pill-yellow">High</span>
+                <span class="pill pill-blue">OpenAI</span>
+              </div>
+            </div>
+            <div class="task-hours">3h · Days 45–46</div>
+          </div>
+
+          <div class="task" id="t26" onclick="toggleTask('t26')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">LangSmith — Tracing, debugging, evaluating LLM chains</div>
+              <div class="task-desc">LangSmith lets you trace every LLM call, debug chains, run evals. Free tier available. Essential for production LangChain/LangGraph apps — employers look for this.</div>
+              <div class="task-pills">
+                <span class="pill pill-yellow">High</span>
+                <span class="pill pill-blue">Observability</span>
+              </div>
+            </div>
+            <div class="task-hours">2h · Day 47</div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="week-title">Week 8 — Phase 2 Capstone</div>
+
+          <div class="task" id="t27" onclick="toggleTask('t27')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Capstone: AI Research Assistant — Multi-Agent with RAG + MLflow tracking</div>
+              <div class="task-desc">CrewAI agents (Researcher + Analyst) → query Pinecone RAG → LangGraph orchestration → FastAPI endpoint → MLflow logs every run → Airflow schedules daily updates. Full stack AI.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Capstone ⭐⭐</span>
+                <span class="pill pill-blue">Portfolio</span>
+              </div>
+            </div>
+            <div class="task-hours">10h · Days 50–56</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PHASE 3 -->
+    <div class="phase" style="border-left: 4px solid #16a34a;">
+      <div class="phase-header" onclick="togglePhase(this)">
+        <div class="phase-num" style="background:#16a34a;">3</div>
+        <div style="flex:1">
+          <h2>Phase 3 — LLM Fine-Tuning + GraphRAG + Certs</h2>
+          <div class="phase-meta">Month 3 · Weeks 9–12 · ~65 hours total</div>
+        </div>
+        <span class="phase-chevron">▾</span>
+      </div>
+      <div class="phase-body">
+
+        <div class="week">
+          <div class="week-title">Week 9 — LLM Fine-Tuning (LoRA / PEFT)</div>
+
+          <div class="task" id="t28" onclick="toggleTask('t28')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Transformer architecture fundamentals — Attention, encoders, decoders</div>
+              <div class="task-desc">You don't need to implement one from scratch, but understanding self-attention and why transformers work is required for intelligent fine-tuning decisions.</div>
+              <div class="task-pills">
+                <span class="pill pill-yellow">Foundation</span>
+              </div>
+            </div>
+            <div class="task-hours">3h · Days 57–58</div>
+          </div>
+
+          <div class="task" id="t29" onclick="toggleTask('t29')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">LoRA + PEFT — Fine-tune Llama 3 / Mistral 7B on custom data</div>
+              <div class="task-desc">Use HuggingFace PEFT + trl library + Google Colab (free T4 GPU). Fine-tune on a domain dataset (financial, medical, code). This is the #1 highest-paid AI skill in 2026.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Critical · $220K+</span>
+                <span class="pill pill-purple">HuggingFace</span>
+              </div>
+            </div>
+            <div class="task-hours">6h · Days 59–62</div>
+          </div>
+
+          <div class="task" id="t30" onclick="toggleTask('t30')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Fine-tune on SageMaker — Use your existing AWS SageMaker skills</div>
+              <div class="task-desc">Run the same LoRA fine-tuning on SageMaker Training Jobs. You already have SageMaker on your resume — connecting fine-tuning to it creates a powerful story for interviews.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Resume Impact ⭐</span>
+                <span class="pill pill-blue">AWS</span>
+              </div>
+            </div>
+            <div class="task-hours">5h · Days 63–65</div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="week-title">Week 10 — GraphRAG + Evaluation</div>
+
+          <div class="task" id="t31" onclick="toggleTask('t31')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">GraphRAG — Microsoft's graph-based retrieval augmentation</div>
+              <div class="task-desc">Install microsoft/graphrag, run indexing pipeline on a document set, query with global/local search. 30–40% better on complex multi-hop questions than standard RAG.</div>
+              <div class="task-pills">
+                <span class="pill pill-green">Emerging · Early Mover</span>
+              </div>
+            </div>
+            <div class="task-hours">5h · Days 66–68</div>
+          </div>
+
+          <div class="task" id="t32" onclick="toggleTask('t32')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">RAG Evaluation — RAGAS framework (faithfulness, relevance, context recall)</div>
+              <div class="task-desc">Build an evaluation pipeline: measure your RAG system's faithfulness (does it hallucinate?), answer relevance, context precision. RAGAS is the standard eval framework.</div>
+              <div class="task-pills">
+                <span class="pill pill-yellow">High</span>
+                <span class="pill pill-blue">RAG Quality</span>
+              </div>
+            </div>
+            <div class="task-hours">3h · Days 69–70</div>
+          </div>
+        </div>
+
+        <div class="week">
+          <div class="week-title">Week 11–12 — Certification Sprint + Final Capstone</div>
+
+          <div class="task" id="t33" onclick="toggleTask('t33')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">AWS ML Specialty exam prep — SageMaker, model tuning, deployment, monitoring</div>
+              <div class="task-desc">You're already AWS-heavy. This cert adds $15–25K to salary. Use Stephane Maarek's Udemy course. Estimated 3–4 week focused prep.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">+$20K Salary</span>
+                <span class="pill pill-blue">Certification</span>
+              </div>
+            </div>
+            <div class="task-hours">10h · Days 71–80</div>
+          </div>
+
+          <div class="task" id="t34" onclick="toggleTask('t34')">
+            <div class="task-check"></div>
+            <div class="task-content">
+              <div class="task-title">Final Capstone: End-to-End AI Platform — Fine-tuned model + GraphRAG + Multi-Agent + FastAPI</div>
+              <div class="task-desc">Your portfolio centerpiece: domain-specific fine-tuned LLM + GraphRAG retrieval + LangGraph multi-agent + FastAPI serving + MLflow tracking + Airflow scheduling + Docker deployment.</div>
+              <div class="task-pills">
+                <span class="pill pill-red">Portfolio ⭐⭐⭐</span>
+                <span class="pill pill-blue">Interview Closer</span>
+              </div>
+            </div>
+            <div class="task-hours">15h · Days 75–90</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ TAB: PYTHON ══ -->
+  <div id="tab-python" class="tab-panel">
+    <div class="section-title">🐍 Python Proficiency Track</div>
+    <div class="tip">
+      <strong>Your starting point</strong>: You know Python basics from AWS Bedrock/SageMaker work. This track fast-tracks you to the advanced Python used in AI frameworks like LangChain, LangGraph, HuggingFace, and FastAPI.
+    </div>
+
+    <div class="py-track">
+      <div class="py-card">
+        <h4>Level 1 — Intermediate (Week 1)</h4>
+        <ul>
+          <li><strong>OOP Advanced</strong> — dataclasses, abstract classes, mixins</li>
+          <li><strong>Decorators</strong> — @property, @classmethod, custom decorators</li>
+          <li><strong>Generators</strong> — yield, generator expressions, lazy evaluation</li>
+          <li><strong>Context Managers</strong> — with statement, __enter__/__exit__</li>
+          <li><strong>Type Hints</strong> — typing module, Pydantic models</li>
+          <li><strong>Resource</strong>: Corey Schafer Python Tutorials (YouTube)</li>
+        </ul>
+      </div>
+
+      <div class="py-card">
+        <h4>Level 2 — Async Python (Week 1)</h4>
+        <ul>
+          <li><strong>async/await</strong> — coroutines, event loop</li>
+          <li><strong>asyncio.gather()</strong> — parallel async tasks</li>
+          <li><strong>aiohttp</strong> — async HTTP client for API calls</li>
+          <li><strong>Timeout handling</strong> — asyncio.wait_for()</li>
+          <li><strong>Concurrency vs Parallelism</strong> — when to use threading vs asyncio vs multiprocessing</li>
+          <li><strong>Resource</strong>: ArjanCodes AsyncIO series (YouTube)</li>
+        </ul>
+      </div>
+
+      <div class="py-card">
+        <h4>Level 3 — Data Libraries (Week 1–2)</h4>
+        <ul>
+          <li><strong>NumPy</strong> — arrays, broadcasting, vectorized ops</li>
+          <li><strong>Pandas</strong> — DataFrames, groupby, merge, apply</li>
+          <li><strong>Matplotlib/Seaborn</strong> — basic plotting for ML results</li>
+          <li><strong>scikit-learn</strong> — pipelines, transformers, cross-validation</li>
+          <li><strong>Resource</strong>: Keith Galli Pandas (YouTube), CS50 Python</li>
+        </ul>
+      </div>
+
+      <div class="py-card">
+        <h4>Level 4 — Python for AI Frameworks (Week 2–3)</h4>
+        <ul>
+          <li><strong>Pydantic v2</strong> — data validation, model config, validators</li>
+          <li><strong>FastAPI patterns</strong> — dependency injection, background tasks, WebSockets</li>
+          <li><strong>dotenv + config management</strong> — settings classes with Pydantic</li>
+          <li><strong>Logging</strong> — structured logging for AI apps</li>
+          <li><strong>Resource</strong>: FastAPI official docs + TechWithTim FastAPI</li>
+        </ul>
+      </div>
+
+      <div class="py-card">
+        <h4>Level 5 — Python Testing (Ongoing)</h4>
+        <ul>
+          <li><strong>pytest</strong> — fixtures, parametrize, mocking</li>
+          <li><strong>pytest-asyncio</strong> — testing async code</li>
+          <li><strong>unittest.mock</strong> — mock LLM responses in tests</li>
+          <li><strong>Coverage</strong> — pytest-cov reports (you know this from Java/JUnit!)</li>
+          <li><strong>Resource</strong>: ArjanCodes Testing Python (YouTube)</li>
+        </ul>
+      </div>
+
+      <div class="py-card">
+        <h4>Python for LLM/AI (Phase 2–3)</h4>
+        <ul>
+          <li><strong>tiktoken</strong> — token counting, context window management</li>
+          <li><strong>LangChain LCEL</strong> — Python-native chain composition syntax</li>
+          <li><strong>Streaming responses</strong> — yield from LLM stream, SSE</li>
+          <li><strong>Memory management</strong> — avoid OOM with large embedding batches</li>
+          <li><strong>Resource</strong>: LangChain docs + Greg Kamradt notebooks</li>
+        </ul>
+      </div>
+    </div>
+
+    <br/>
+    <div class="section-title">📊 Python Practice Projects (Build these)</div>
+    <div class="py-track">
+      <div class="py-card" style="border-left-color: #dc2626;">
+        <h4 style="color:#dc2626;">Week 1 Project</h4>
+        <ul>
+          <li>CLI tool that reads a JD text file and scores it against your resume using Python (replicate your ATS backend logic in pure Python)</li>
+          <li>Uses: OOP, file I/O, dataclasses, type hints</li>
+        </ul>
+      </div>
+      <div class="py-card" style="border-left-color: #ca8a04;">
+        <h4 style="color:#ca8a04;">Week 2 Project</h4>
+        <ul>
+          <li>Async web scraper that pulls 10 job postings from Indeed, extracts skills, stores in SQLite</li>
+          <li>Uses: asyncio, aiohttp, BeautifulSoup, pandas</li>
+        </ul>
+      </div>
+      <div class="py-card" style="border-left-color: #16a34a;">
+        <h4 style="color:#16a34a;">Week 3 Project</h4>
+        <ul>
+          <li>FastAPI service: upload a PDF resume → extract text → embed → store in Pinecone → query by job title</li>
+          <li>Uses: FastAPI, pdfplumber, httpx, Pinecone SDK, Pydantic</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB: SCHEDULE ══ -->
+  <div id="tab-schedule" class="tab-panel">
+    <div class="section-title">🕐 Daily Study Schedule (2–3 hours/day)</div>
+    <div class="tip">
+      <strong>Consistency beats intensity.</strong> 2 focused hours daily beats 8 hours on weekends. Protect this time block like a meeting.
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+
+      <div>
+        <div class="section-title" style="font-size:.9rem;">🌙 Weekday Block (2h)</div>
+        <div class="schedule-grid">
+          <div class="sched-time">7:00 PM</div>
+          <div class="sched-content"><strong>Warm-up (15 min)</strong><span>Review yesterday's notes, check what you built</span></div>
+          <div class="sched-time">7:15 PM</div>
+          <div class="sched-content"><strong>Video Lecture (45 min)</strong><span>One focused tutorial — no multitasking</span></div>
+          <div class="sched-time">8:00 PM</div>
+          <div class="sched-content"><strong>Hands-on Coding (50 min)</strong><span>Implement what you just watched — break it, fix it</span></div>
+          <div class="sched-time">8:50 PM</div>
+          <div class="sched-content"><strong>Notes + GitHub commit (10 min)</strong><span>Push code, write 3-bullet summary in a learning log</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title" style="font-size:.9rem;">☀️ Weekend Block (3h)</div>
+        <div class="schedule-grid">
+          <div class="sched-time">10:00 AM</div>
+          <div class="sched-content"><strong>Review + Deep Dive (30 min)</strong><span>Re-read docs, fix issues from the week</span></div>
+          <div class="sched-time">10:30 AM</div>
+          <div class="sched-content"><strong>Project Work (2h)</strong><span>Build the week's mini-project or capstone</span></div>
+          <div class="sched-time">12:30 PM</div>
+          <div class="sched-content"><strong>Planning (30 min)</strong><span>Plan next week, update this roadmap, commit all code</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">📅 90-Day Timeline at a Glance</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;">
+        <div style="padding:20px;border-right:1px solid var(--border);">
+          <div style="font-weight:800;color:#dc2626;font-size:1rem;margin-bottom:12px;">🔴 Month 1 (Days 1–30)</div>
+          <ul style="padding-left:16px;font-size:.84rem;line-height:2;">
+            <li>Week 1: Python advanced + AsyncIO + FastAPI</li>
+            <li>Week 2: Embeddings + Pinecone + pgvector</li>
+            <li>Week 3: LangGraph + ReAct agents</li>
+            <li>Week 4: Advanced RAG + Capstone 1</li>
+          </ul>
+        </div>
+        <div style="padding:20px;border-right:1px solid var(--border);">
+          <div style="font-weight:800;color:#ca8a04;font-size:1rem;margin-bottom:12px;">🟡 Month 2 (Days 31–60)</div>
+          <ul style="padding-left:16px;font-size:.84rem;line-height:2;">
+            <li>Week 5: HuggingFace ecosystem</li>
+            <li>Week 6: MLflow + Apache Airflow</li>
+            <li>Week 7: CrewAI + OpenAI advanced</li>
+            <li>Week 8: Capstone 2 (AI Research Assistant)</li>
+          </ul>
+        </div>
+        <div style="padding:20px;">
+          <div style="font-weight:800;color:#16a34a;font-size:1rem;margin-bottom:12px;">🟢 Month 3 (Days 61–90)</div>
+          <ul style="padding-left:16px;font-size:.84rem;line-height:2;">
+            <li>Week 9: LLM Fine-tuning (LoRA/PEFT)</li>
+            <li>Week 10: GraphRAG + RAGAS evaluation</li>
+            <li>Week 11: AWS ML Specialty prep</li>
+            <li>Week 12: Final Capstone + Job Search</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB: RESOURCES ══ -->
+  <div id="tab-resources" class="tab-panel">
+    <div class="section-title">🎥 Video Learning Resources</div>
+    <div class="tip">
+      <strong>Rule:</strong> Watch at 1.5x speed. Pause and code along immediately. Never watch more than 1 hour without coding.
+    </div>
+
+    <div class="resources-grid">
+
+      <div class="res-card">
+        <div class="res-card-header">
+          <div class="res-icon" style="background:#f3e8ff;">🐍</div>
+          <div><h3>Python — Intermediate to Advanced</h3><div class="res-type">Free · YouTube</div></div>
+        </div>
+        <div class="res-links">
+          <a class="res-link" href="https://www.youtube.com/playlist?list=PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU" target="_blank">
+            <span class="link-icon">▶</span> Corey Schafer — Python OOP Series
+            <span class="res-tag">BEST</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/watch?v=Qg68h6326jI" target="_blank">
+            <span class="link-icon">▶</span> ArjanCodes — Python AsyncIO Deep Dive
+            <span class="res-tag">AsyncIO</span>
+          </a>
+          <a class="res-link" href="https://cs50.harvard.edu/python/2022/" target="_blank">
+            <span class="link-icon">▶</span> CS50P — Harvard Python (free, full course)
+            <span class="res-tag">Free</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/c/ArjanCodes" target="_blank">
+            <span class="link-icon">▶</span> ArjanCodes Channel — Clean Python patterns
+            <span class="res-tag">Quality</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="res-card">
+        <div class="res-card-header">
+          <div class="res-icon" style="background:#dbeafe;">⚡</div>
+          <div><h3>FastAPI</h3><div class="res-type">Free · YouTube + Docs</div></div>
+        </div>
+        <div class="res-links">
+          <a class="res-link" href="https://www.youtube.com/watch?v=0RS9W8MtZe4" target="_blank">
+            <span class="link-icon">▶</span> TechWithTim — FastAPI Full Course (4h)
+            <span class="res-tag">BEST</span>
+          </a>
+          <a class="res-link" href="https://fastapi.tiangolo.com/tutorial/" target="_blank">
+            <span class="link-icon">📖</span> FastAPI Official Tutorial (interactive)
+            <span class="res-tag">Docs</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/watch?v=cbASjoZZGIw" target="_blank">
+            <span class="link-icon">▶</span> Traversy Media — FastAPI Crash Course
+            <span class="res-tag">Quick</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="res-card">
+        <div class="res-card-header">
+          <div class="res-icon" style="background:#dcfce7;">🔗</div>
+          <div><h3>LangChain + LangGraph</h3><div class="res-type">Free · YouTube + Notebooks</div></div>
+        </div>
+        <div class="res-links">
+          <a class="res-link" href="https://www.youtube.com/c/GregKamradt" target="_blank">
+            <span class="link-icon">▶</span> Greg Kamradt — LangChain Tutorials (BEST)
+            <span class="res-tag">⭐ TOP</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/playlist?list=PLfaIDFEXuae16n2TWUkKq5PgJ0w6Pkwtj" target="_blank">
+            <span class="link-icon">▶</span> James Briggs — LangChain/Agents Series
+            <span class="res-tag">Agents</span>
+          </a>
+          <a class="res-link" href="https://langchain-ai.github.io/langgraph/tutorials/" target="_blank">
+            <span class="link-icon">📖</span> LangGraph Official Tutorials
+            <span class="res-tag">Official</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/watch?v=R8KB-Zcynxc" target="_blank">
+            <span class="link-icon">▶</span> LangGraph Crash Course — Sam Witteveen
+            <span class="res-tag">Quick</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="res-card">
+        <div class="res-card-header">
+          <div class="res-icon" style="background:#fff7ed;">🤗</div>
+          <div><h3>Hugging Face + Fine-Tuning</h3><div class="res-type">Free · HF Course</div></div>
+        </div>
+        <div class="res-links">
+          <a class="res-link" href="https://huggingface.co/learn/nlp-course/chapter1/1" target="_blank">
+            <span class="link-icon">📖</span> HuggingFace NLP Course (official, free)
+            <span class="res-tag">⭐ TOP</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/watch?v=eC6Hd1hFvos" target="_blank">
+            <span class="link-icon">▶</span> Andrej Karpathy — Let's Build GPT from scratch
+            <span class="res-tag">Deep</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/watch?v=us5GFUiPtOc" target="_blank">
+            <span class="link-icon">▶</span> DataBricks — Fine-Tuning LLMs with PEFT/LoRA
+            <span class="res-tag">LoRA</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/watch?v=iERRmcGMBrg" target="_blank">
+            <span class="link-icon">▶</span> Maxime Labonne — QLoRA Fine-Tuning Llama
+            <span class="res-tag">Practical</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="res-card">
+        <div class="res-card-header">
+          <div class="res-icon" style="background:#fef9c3;">📦</div>
+          <div><h3>Vector Databases + RAG</h3><div class="res-type">Free · YouTube</div></div>
+        </div>
+        <div class="res-links">
+          <a class="res-link" href="https://www.youtube.com/watch?v=dN0lsF2cvm4" target="_blank">
+            <span class="link-icon">▶</span> Greg Kamradt — RAG from Scratch (Full Series)
+            <span class="res-tag">⭐ BEST</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/watch?v=6_mfYPPcZ60" target="_blank">
+            <span class="link-icon">▶</span> Pinecone — Vector Database Explained
+            <span class="res-tag">Vector DB</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/watch?v=ea2W8IogX80" target="_blank">
+            <span class="link-icon">▶</span> LlamaIndex RAG — Advanced Techniques
+            <span class="res-tag">Advanced</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/watch?v=iB8SQo8LRAY" target="_blank">
+            <span class="link-icon">▶</span> Chunking Strategies Deep Dive
+            <span class="res-tag">Chunking</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="res-card">
+        <div class="res-card-header">
+          <div class="res-icon" style="background:#fee2e2;">🎓</div>
+          <div><h3>DeepLearning.AI (Andrew Ng)</h3><div class="res-type">Free short courses · deeplearning.ai</div></div>
+        </div>
+        <div class="res-links">
+          <a class="res-link" href="https://learn.deeplearning.ai/courses/chatgpt-prompt-eng-for-devs" target="_blank">
+            <span class="link-icon">▶</span> ChatGPT Prompt Engineering for Devs
+            <span class="res-tag">1h · Free</span>
+          </a>
+          <a class="res-link" href="https://learn.deeplearning.ai/courses/building-systems-with-chatgpt" target="_blank">
+            <span class="link-icon">▶</span> Building Systems with ChatGPT
+            <span class="res-tag">2h · Free</span>
+          </a>
+          <a class="res-link" href="https://learn.deeplearning.ai/courses/langchain" target="_blank">
+            <span class="link-icon">▶</span> LangChain for LLM Application Development
+            <span class="res-tag">2h · Free</span>
+          </a>
+          <a class="res-link" href="https://learn.deeplearning.ai/courses/finetuning-large-language-models" target="_blank">
+            <span class="link-icon">▶</span> Fine-Tuning Large Language Models
+            <span class="res-tag">1h · Free</span>
+          </a>
+          <a class="res-link" href="https://learn.deeplearning.ai/courses/building-agentic-rag-with-llamaindex" target="_blank">
+            <span class="link-icon">▶</span> Building Agentic RAG with LlamaIndex
+            <span class="res-tag">2h · Free</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="res-card">
+        <div class="res-card-header">
+          <div class="res-icon" style="background:#e0e7ff;">⚙️</div>
+          <div><h3>MLOps — MLflow + Airflow</h3><div class="res-type">Free · YouTube</div></div>
+        </div>
+        <div class="res-links">
+          <a class="res-link" href="https://madewithml.com/" target="_blank">
+            <span class="link-icon">📖</span> Made With ML — MLOps Course (Goku Mohandas)
+            <span class="res-tag">⭐ BEST</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/watch?v=OzBHTN0SNKY" target="_blank">
+            <span class="link-icon">▶</span> MLflow Tutorial — Experiment Tracking
+            <span class="res-tag">MLflow</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/watch?v=K9AnJ9_ZAXE" target="_blank">
+            <span class="link-icon">▶</span> Apache Airflow Full Course for Beginners
+            <span class="res-tag">Airflow</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="res-card">
+        <div class="res-card-header">
+          <div class="res-icon" style="background:#d1fae5;">☁️</div>
+          <div><h3>AWS ML Specialty Cert</h3><div class="res-type">Paid · Udemy ~$15</div></div>
+        </div>
+        <div class="res-links">
+          <a class="res-link" href="https://www.udemy.com/course/aws-machine-learning/" target="_blank">
+            <span class="link-icon">▶</span> Stephane Maarek — AWS ML Specialty (Udemy)
+            <span class="res-tag">⭐ BEST · $15</span>
+          </a>
+          <a class="res-link" href="https://aws.amazon.com/training/learn-about/machine-learning/" target="_blank">
+            <span class="link-icon">📖</span> AWS Official ML Training (free labs)
+            <span class="res-tag">Free</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/watch?v=0S9cOcR4HTY" target="_blank">
+            <span class="link-icon">▶</span> AWS ML Specialty Full Exam Prep (YouTube)
+            <span class="res-tag">Free</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="res-card">
+        <div class="res-card-header">
+          <div class="res-icon" style="background:#fce7f3;">🕸️</div>
+          <div><h3>GraphRAG + Advanced Agents</h3><div class="res-type">Free · GitHub + YouTube</div></div>
+        </div>
+        <div class="res-links">
+          <a class="res-link" href="https://microsoft.github.io/graphrag/" target="_blank">
+            <span class="link-icon">📖</span> Microsoft GraphRAG Official Docs
+            <span class="res-tag">Official</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/watch?v=PbFHOdpkMzE" target="_blank">
+            <span class="link-icon">▶</span> GraphRAG Explained + Demo
+            <span class="res-tag">Quick</span>
+          </a>
+          <a class="res-link" href="https://www.youtube.com/watch?v=AxnL1Cknz7M" target="_blank">
+            <span class="link-icon">▶</span> CrewAI — Build Multi-Agent Systems
+            <span class="res-tag">CrewAI</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── Tab switching ──
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ── Phase toggle ──
+  function togglePhase(header) {
+    header.parentElement.classList.toggle('open');
+  }
+
+  // ── Task toggle + localStorage ──
+  function toggleTask(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('done');
+    const done = [...document.querySelectorAll('.task.done')].map(e => e.id).filter(Boolean);
+    localStorage.setItem('roadmap_done', JSON.stringify(done));
+    updateProgress();
+  }
+
+  function loadProgress() {
+    const saved = JSON.parse(localStorage.getItem('roadmap_done') || '[]');
+    saved.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('done');
+    });
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const all  = [...new Set([...document.querySelectorAll('.task')].map(e => e.id).filter(Boolean))];
+    const done = [...new Set([...document.querySelectorAll('.task.done')].map(e => e.id).filter(Boolean))];
+    const pct  = all.length ? Math.round(done.length / all.length * 100) : 0;
+    document.getElementById('done-count').textContent  = done.length;
+    document.getElementById('total-count').textContent = all.length;
+    document.getElementById('main-bar').style.width    = pct + '%';
+  }
+
+  // Init
+  loadProgress();
+</script>
+</body>
+</html>
