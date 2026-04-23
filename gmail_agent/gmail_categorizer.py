@@ -23,17 +23,30 @@ class GmailCategorizer:
         self.categories = defaultdict(list)
         
     def authenticate(self, force_refresh=False):
-        """Authenticate with Gmail API with automatic token refresh"""
+        """Authenticate with Gmail API with automatic token refresh.
+        Cloud-safe: loads token/credentials from environment variables when
+        GMAIL_TOKEN_B64 / GMAIL_CREDENTIALS_JSON are set (Railway, Render, etc.)
+        """
         creds = None
-        
-        if os.path.exists(self.token_file) and not force_refresh:
+
+        # ── 1. Load token ──────────────────────────────────────────────────
+        token_b64 = os.environ.get('GMAIL_TOKEN_B64')
+        if token_b64 and not force_refresh:
+            try:
+                creds = pickle.loads(base64.b64decode(token_b64))
+                print("✓ Token loaded from environment variable")
+            except Exception as e:
+                print(f"⚠️  Error loading token from env: {e}")
+                creds = None
+        elif os.path.exists(self.token_file) and not force_refresh:
             try:
                 with open(self.token_file, 'rb') as token:
                     creds = pickle.load(token)
             except Exception as e:
                 print(f"⚠️  Error loading token: {e}. Generating new token...")
                 creds = None
-        
+
+        # ── 2. Refresh or re-auth if needed ───────────────────────────────
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 try:
@@ -43,20 +56,36 @@ class GmailCategorizer:
                 except Exception as e:
                     print(f"⚠️  Token refresh failed: {e}. Re-authenticating...")
                     creds = None
-            
+
             if not creds:
+                # ── Load credentials.json from env var or file ──
+                creds_json = os.environ.get('GMAIL_CREDENTIALS_JSON')
+                if creds_json:
+                    import tempfile
+                    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as tmp:
+                        tmp.write(creds_json)
+                        tmp_path = tmp.name
+                    flow = InstalledAppFlow.from_client_secrets_file(tmp_path, SCOPES)
+                    os.unlink(tmp_path)
+                else:
+                    flow = InstalledAppFlow.from_client_secrets_file(
+                        self.credentials_file, SCOPES)
                 print("🔑 Starting OAuth authentication...")
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    self.credentials_file, SCOPES)
                 creds = flow.run_local_server(port=0)
-            
+
+            # ── 3. Save token (file if writable, log b64 for cloud) ───────
             try:
                 with open(self.token_file, 'wb') as token:
                     pickle.dump(creds, token)
                 print("✓ Token saved successfully")
             except Exception as e:
-                print(f"⚠️  Warning: Could not save token: {e}")
-        
+                print(f"⚠️  Warning: Could not save token to file: {e}")
+
+            # Print new base64 token so it can be updated in cloud env vars
+            if token_b64:
+                new_b64 = base64.b64encode(pickle.dumps(creds)).decode()
+                print(f"🔑 Update GMAIL_TOKEN_B64 env var with: {new_b64[:40]}...")
+
         self.creds = creds
         self.service = build('gmail', 'v1', credentials=creds)
         print("✓ Successfully authenticated with Gmail API")
