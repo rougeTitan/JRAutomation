@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, Response
 from flask_cors import CORS
 import json
 import os
@@ -17,6 +17,86 @@ TOKEN_FILE = os.path.join(AGENT_DIR, 'token.pickle')
 def index():
     """Serve the main dashboard"""
     return render_template('index.html')
+
+
+@app.route('/manifest.json')
+def pwa_manifest():
+    """PWA Web App Manifest"""
+    return jsonify({
+        "name": "Job Email Analyzer",
+        "short_name": "JobAI",
+        "description": "AI-powered recruiter email analyzer with tailored resume & smart replies",
+        "start_url": "/",
+        "display": "standalone",
+        "background_color": "#f5f5f7",
+        "theme_color": "#1d1d1f",
+        "orientation": "portrait-primary",
+        "categories": ["productivity", "business"],
+        "icons": [
+            {"src": "/pwa-icon/192", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable"},
+            {"src": "/pwa-icon/512", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable"}
+        ],
+        "screenshots": [],
+        "shortcuts": [
+            {"name": "Refresh Emails", "url": "/?action=refresh", "description": "Fetch latest recruiter emails"}
+        ]
+    })
+
+
+@app.route('/pwa-icon/<int:size>')
+def pwa_icon(size):
+    """Generate SVG app icon at requested size"""
+    r = size // 5
+    fs = int(size * 0.45)
+    svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" viewBox="0 0 {size} {size}">'
+           f'<rect width="{size}" height="{size}" rx="{r}" fill="#1d1d1f"/>'
+           f'<rect x="{size//8}" y="{size//8}" width="{size*3//4}" height="{size*3//4}" rx="{r//2}" fill="#0071e3"/>'
+           f'<text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" '
+           f'font-family="system-ui,sans-serif" font-size="{fs}" fill="white">&#x1F4BC;</text>'
+           f'</svg>')
+    return Response(svg, mimetype='image/svg+xml')
+
+
+@app.route('/sw.js')
+def service_worker():
+    """PWA Service Worker — network-first for API, cache-first for shell"""
+    js = """
+const CACHE = 'jra-v2';
+const SHELL = ['/', '/manifest.json'];
+
+self.addEventListener('install', e => {
+    e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', e => {
+    e.waitUntil(caches.keys().then(keys =>
+        Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    ));
+    self.clients.claim();
+});
+
+self.addEventListener('fetch', e => {
+    const url = new URL(e.request.url);
+    if (url.pathname.startsWith('/api/')) {
+        // Network-first for all API calls
+        e.respondWith(
+            fetch(e.request)
+                .then(r => { const c = r.clone(); caches.open(CACHE).then(ca => ca.put(e.request, c)); return r; })
+                .catch(() => caches.match(e.request))
+        );
+    } else {
+        // Cache-first for app shell
+        e.respondWith(
+            caches.match(e.request).then(cached => cached || fetch(e.request)
+                .then(r => { const c = r.clone(); caches.open(CACHE).then(ca => ca.put(e.request, c)); return r; })
+            )
+        );
+    }
+});
+"""
+    return Response(js, mimetype='application/javascript',
+                    headers={'Service-Worker-Allowed': '/'})
 
 @app.route('/api/analyze', methods=['POST'])
 def analyze_emails():
