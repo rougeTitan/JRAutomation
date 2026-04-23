@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "JobAI",
+    "slug": "jobai",
+    "version": "1.0.0",
+    "scheme": "jobai",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1d1d1f"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1d1d1f"
+      },
+      "package": "com.rougetitan.jobai",
+      "permissions": [
+        "android.permission.INTERNET"
+      ]
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.rougetitan.jobai",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Used for secure API key storage"
+      }
+    },
+    "plugins": [
+      "expo-secure-store"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "jobai-rn"
+      }
+    }
+  }
+}
