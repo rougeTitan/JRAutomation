@@ -3,10 +3,10 @@
   "appName": "JobAI",
   "webDir": "www",
   "server": {
-    "url": "http://172.26.14.90:5000",
-    "cleartext": true,
-    "androidScheme": "http",
-    "iosScheme": "http"
+    "url": "https://web-production-186bf.up.railway.app",
+    "cleartext": false,
+    "androidScheme": "https",
+    "iosScheme": "https"
   },
   "plugins": {
     "SplashScreen": {

@@ -3,7 +3,7 @@
   "appName": "JobAI",
   "webDir": "www",
   "server": {
-    "url": "https://YOUR-APP.railway.app",
+    "url": "https://web-production-186bf.up.railway.app",
     "cleartext": false,
     "androidScheme": "https",
     "iosScheme": "https"
