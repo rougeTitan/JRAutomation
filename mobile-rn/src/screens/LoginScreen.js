@@ -11,7 +11,7 @@ import { saveTokens, saveUserEmail } from '../utils/storage';
 WebBrowser.maybeCompleteAuthSession();
 
 // ── Get these from Google Cloud Console → OAuth 2.0 Clients (Android) ─────
-const ANDROID_CLIENT_ID = 'YOUR_ANDROID_CLIENT_ID.apps.googleusercontent.com';
+const ANDROID_CLIENT_ID = '608251097092-90m74jqnjrhmt01vtfj87qlooclqom3p.apps.googleusercontent.com';
 const IOS_CLIENT_ID = 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com';
 
 export default function LoginScreen({ onSignIn }) {
